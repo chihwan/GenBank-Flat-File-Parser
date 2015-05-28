@@ -1,7 +1,8 @@
 # GenBank-Flat-File-Parser
 
 I had a hard time finding a flat file parser for GenBank files in
-Java.
+Java.  Biojava3 does it, but fails to model half of the fields...which
+is utterly useless.
 
 Here is my attempt at providing one...
 
