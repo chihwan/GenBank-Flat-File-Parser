@@ -1,0 +1,12 @@
+# GenBank-Flat-File-Parser
+
+I had a hard time finding a flat file parser for GenBank files in
+Java.
+
+Here is my attempt at providing one...
+
+GenBankParser parser = GenBankParser.getInstance();
+List<GenBankInfo> results = parser.parse(new File("/tmp", "single.gb.gz"));
+
+NOTE: it expects gzipped files as inputs.
+
