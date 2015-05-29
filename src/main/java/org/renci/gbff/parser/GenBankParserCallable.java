@@ -106,9 +106,9 @@ public class GenBankParserCallable implements Callable<GenBankInfo> {
                 StringBuilder sb = new StringBuilder();
                 sb.append(String.format("%s%n", line.substring(10, line.length())));
                 do {
-                    line = lineIter.next();
+                    line = lineIter.next().trim();
                     sb.append(String.format("%s%n", line));
-                } while (!line.trim().endsWith("."));
+                } while (!line.endsWith("."));
                 info.getSource().setOrganism(sb.toString());
             }
 
@@ -133,11 +133,11 @@ public class GenBankParserCallable implements Callable<GenBankInfo> {
 
                     String propName = null;
                     line = lineIter.next();
-                    processFeatureQualifier(line, propName, feature, lineIter);
+                    processFeatureQualifier(line.trim(), propName, feature, lineIter);
 
                     while (!line.startsWith(ORIGIN_TAG) && StringUtils.isEmpty(line.substring(5, 20).trim())) {
                         line = lineIter.next();
-                        processFeatureQualifier(line, propName, feature, lineIter);
+                        processFeatureQualifier(line.trim(), propName, feature, lineIter);
                     }
 
                     info.getFeatures().add(feature);
@@ -166,25 +166,25 @@ public class GenBankParserCallable implements Callable<GenBankInfo> {
     }
 
     private void processFeatureQualifier(String line, String propName, Feature feature, Iterator<String> lineIter) {
-        if (line.trim().startsWith("/") && line.trim().contains("=")) {
-            propName = line.trim().split("=")[0];
+        if (line.startsWith("/") && line.contains("=")) {
+            propName = line.split("=")[0];
             propName = propName.substring(1, propName.length());
 
-            if (!line.trim().contains("\"")) {
+            if (!line.contains("\"")) {
                 // probably numeric
-                feature.getQualifiers().setProperty(propName, line.trim().split("=")[1]);
+                feature.getQualifiers().setProperty(propName, line.split("=")[1]);
                 return;
             }
 
-            if (line.trim().endsWith("\"")) {
+            if (line.endsWith("\"")) {
                 // single line string value
-                feature.getQualifiers().setProperty(propName, line.trim().split("=")[1].replace("\"", ""));
+                feature.getQualifiers().setProperty(propName, line.split("=")[1].replace("\"", ""));
                 return;
             }
 
-            if (!line.trim().endsWith("\"")) {
+            if (!line.endsWith("\"")) {
                 // multiline value
-                StringBuilder sb = new StringBuilder(String.format("%s%n", line.trim().split("=")[1]));
+                StringBuilder sb = new StringBuilder(String.format("%s%n", line.split("=")[1]));
                 do {
                     line = lineIter.next();
                     sb.append(String.format("%s%n", line.trim()));
