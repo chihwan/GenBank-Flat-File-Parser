@@ -20,7 +20,7 @@ public class Scratch {
         long end = System.currentTimeMillis();
         assertTrue(results != null);
         assertTrue(results.size() == 1);
-        System.out.println(String.format("%d millis", end - start));
+        System.out.println(String.format("%d seconds", (end - start) / 1000));
         System.out.println(results.get(0).toString());
         System.out.printf("ORGANISM: %s%n", results.get(0).getSource().getOrganism());
         for (Feature feature : results.get(0).getFeatures()) {
@@ -44,7 +44,7 @@ public class Scratch {
         assertTrue(results != null);
         assertTrue(results.size() > 1);
         System.out.println(String.format("%d records", results.size()));
-        System.out.println(String.format("%d millis", end - start));
+        System.out.println(String.format("%d millis", (end - start) / 1000));
         // for (GenBankInfo info : results) {
         // System.out.println(info.toString());
         // }
