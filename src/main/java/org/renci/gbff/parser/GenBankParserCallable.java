@@ -74,6 +74,16 @@ public class GenBankParserCallable implements Callable<GenBankInfo> {
                 info.setLocus(line.substring(12, line.length()));
             }
 
+            if (line.startsWith(DEFINITION_TAG)) {
+                StringBuilder sb = new StringBuilder();
+                sb.append(String.format("%s%n", line.substring(12, line.length())));
+                do {
+                    line = lineIter.next();
+                    sb.append(String.format("%s%n", line));
+                } while (!line.trim().endsWith("."));
+                info.setDefinition(sb.toString());
+            }
+
             if (line.startsWith(ACCESSION_TAG)) {
                 info.setAccession(line.substring(12, line.length()));
             }
@@ -94,22 +104,12 @@ public class GenBankParserCallable implements Callable<GenBankInfo> {
 
             if (line.startsWith(ORGANISM_TAG)) {
                 StringBuilder sb = new StringBuilder();
-                sb.append(String.format("%s%n", line.substring(12, line.length())));
+                sb.append(String.format("%s%n", line.substring(10, line.length())));
                 do {
                     line = lineIter.next();
                     sb.append(String.format("%s%n", line));
                 } while (!line.trim().endsWith("."));
                 info.getSource().setOrganism(sb.toString());
-            }
-
-            if (line.startsWith(DEFINITION_TAG)) {
-                StringBuilder sb = new StringBuilder();
-                sb.append(String.format("%s%n", line.substring(12, line.length())));
-                do {
-                    line = lineIter.next();
-                    sb.append(String.format("%s%n", line));
-                } while (!line.trim().endsWith("."));
-                info.setDefinition(sb.toString());
             }
 
             if (line.startsWith(COMMENT_TAG)) {
