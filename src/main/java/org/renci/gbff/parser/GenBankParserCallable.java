@@ -2,11 +2,14 @@ package org.renci.gbff.parser;
 
 import java.util.Iterator;
 import java.util.LinkedList;
+import java.util.StringTokenizer;
 import java.util.concurrent.Callable;
 
 import org.apache.commons.lang3.StringUtils;
+import org.renci.gbff.parser.model.Comment;
 import org.renci.gbff.parser.model.Feature;
 import org.renci.gbff.parser.model.GenBankInfo;
+import org.renci.gbff.parser.model.Origin;
 import org.renci.gbff.parser.model.Source;
 
 public class GenBankParserCallable implements Callable<GenBankInfo> {
@@ -23,7 +26,7 @@ public class GenBankParserCallable implements Callable<GenBankInfo> {
 
     public static final String SOURCE_TAG = "SOURCE";
 
-    public static final String ORGANISM_TAG = "  ORGANISM";
+    public static final String ORGANISM_TAG = "ORGANISM";
 
     public static final String REFERENCE_TAG = "REFERENCE";
 
@@ -109,6 +112,18 @@ public class GenBankParserCallable implements Callable<GenBankInfo> {
                 info.setDefinition(sb.toString());
             }
 
+            if (line.startsWith(COMMENT_TAG)) {
+                StringBuilder sb = new StringBuilder();
+                sb.append(String.format("%s%n", line.substring(12, line.length())));
+                do {
+                    line = lineIter.next();
+                    sb.append(String.format("%s%n", line));
+                } while (!line.trim().endsWith("."));
+                Comment comment = new Comment();
+                comment.setDescription(sb.toString());
+                info.setComment(comment);
+            }
+
             if (line.startsWith(FEATURES_TAG)) {
                 line = lineIter.next();
                 while (!line.startsWith(ORIGIN_TAG)) {
@@ -126,6 +141,21 @@ public class GenBankParserCallable implements Callable<GenBankInfo> {
                     }
 
                     info.getFeatures().add(feature);
+                }
+            }
+
+            if (line.startsWith(ORIGIN_TAG)) {
+                while (lineIter.hasNext()) {
+                    line = lineIter.next().trim();
+                    StringTokenizer st = new StringTokenizer(line, " ");
+                    Origin origin = new Origin();
+                    origin.setIndex(Integer.valueOf(st.nextToken()));
+                    StringBuilder sb = new StringBuilder();
+                    while (st.hasMoreTokens()) {
+                        sb.append(st.nextToken());
+                    }
+                    origin.setSequence(sb.toString());
+                    info.getOrigin().add(origin);
                 }
 
             }
