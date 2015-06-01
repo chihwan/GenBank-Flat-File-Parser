@@ -39,15 +39,15 @@ public class Scratch {
     public void testMultiple() {
         GenBankParser parser = GenBankParser.getInstance();
         long start = System.currentTimeMillis();
-        List<GenBankInfo> results = parser.parse(new File("/tmp", "vertebrate_mammalian.1.rna.gbff.gz"));
+        List<GenBankInfo> results = parser.parse(new File("/tmp", "vertebrate_mammalian.95.rna.gbff.gz"));
         long end = System.currentTimeMillis();
         assertTrue(results != null);
         assertTrue(results.size() > 1);
         System.out.println(String.format("%d records", results.size()));
         System.out.println(String.format("%d millis", (end - start) / 1000));
-        // for (GenBankInfo info : results) {
-        // System.out.println(info.toString());
-        // }
+        for (GenBankInfo info : results) {
+            System.out.println(info.toString());
+        }
     }
 
 }
