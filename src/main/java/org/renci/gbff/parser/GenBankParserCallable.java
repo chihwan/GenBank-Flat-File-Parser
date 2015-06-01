@@ -77,10 +77,10 @@ public class GenBankParserCallable implements Callable<GenBankInfo> {
             if (line.startsWith(DEFINITION_TAG)) {
                 StringBuilder sb = new StringBuilder();
                 sb.append(String.format("%s%n", line.substring(12, line.length())));
-                do {
+                while (!line.trim().endsWith(".")) {
                     line = lineIter.next();
                     sb.append(String.format("%s%n", line));
-                } while (!line.trim().endsWith("."));
+                }
                 info.setDefinition(sb.toString());
             }
 
