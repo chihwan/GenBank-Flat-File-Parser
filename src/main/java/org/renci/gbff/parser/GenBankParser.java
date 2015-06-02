@@ -12,7 +12,7 @@ import java.util.concurrent.ExecutionException;
 import java.util.concurrent.Executors;
 import java.util.zip.GZIPInputStream;
 
-import org.renci.gbff.parser.model.GenBankInfo;
+import org.renci.gbff.parser.model.Sequence;
 
 public class GenBankParser {
 
@@ -29,8 +29,8 @@ public class GenBankParser {
         super();
     }
 
-    public List<GenBankInfo> parse(File... gbFiles) {
-        List<GenBankInfo> ret = new ArrayList<GenBankInfo>();
+    public List<Sequence> parse(File... gbFiles) {
+        List<Sequence> ret = new ArrayList<Sequence>();
 
         for (File f : gbFiles) {
             try (BufferedReader br = new BufferedReader(new InputStreamReader(new GZIPInputStream(
@@ -41,7 +41,7 @@ public class GenBankParser {
                 while ((line = br.readLine()) != null) {
                     if (line.startsWith("//")) {
                         try {
-                            GenBankInfo info = new GenBankParserCallable(lines).call();
+                            Sequence info = new GenBankParserCallable(lines).call();
                             ret.add(info);
                             lines.clear();
                         } catch (InterruptedException | ExecutionException e) {
