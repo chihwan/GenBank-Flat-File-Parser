@@ -15,6 +15,7 @@ public class Feature implements Serializable {
 
     public Feature() {
         super();
+        this.qualifiers = new Properties();
     }
 
     public String getType() {
@@ -34,9 +35,6 @@ public class Feature implements Serializable {
     }
 
     public Properties getQualifiers() {
-        if (qualifiers == null) {
-            qualifiers = new Properties();
-        }
         return qualifiers;
     }
 
