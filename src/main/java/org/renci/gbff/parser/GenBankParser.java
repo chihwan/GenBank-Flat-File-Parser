@@ -3,13 +3,11 @@ package org.renci.gbff.parser;
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileInputStream;
-import java.io.IOException;
 import java.io.InputStreamReader;
 import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.concurrent.ExecutionException;
-import java.util.concurrent.Executors;
 import java.util.zip.GZIPInputStream;
 
 import org.renci.gbff.parser.model.Sequence;
