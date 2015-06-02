@@ -7,7 +7,7 @@ import java.util.List;
 
 import org.junit.Test;
 import org.renci.gbff.parser.model.Feature;
-import org.renci.gbff.parser.model.GenBankInfo;
+import org.renci.gbff.parser.model.Sequence;
 import org.renci.gbff.parser.model.Origin;
 
 public class Scratch {
@@ -16,7 +16,7 @@ public class Scratch {
     public void testSingle() {
         GenBankParser parser = GenBankParser.getInstance();
         long start = System.currentTimeMillis();
-        List<GenBankInfo> results = parser.parse(new File("/tmp", "single.gb.gz"));
+        List<Sequence> results = parser.parse(new File("/tmp", "single.gb.gz"));
         long end = System.currentTimeMillis();
         assertTrue(results != null);
         assertTrue(results.size() == 1);
@@ -39,13 +39,13 @@ public class Scratch {
     public void testMultiple() {
         GenBankParser parser = GenBankParser.getInstance();
         long start = System.currentTimeMillis();
-        List<GenBankInfo> results = parser.parse(new File("/tmp", "vertebrate_mammalian.95.rna.gbff.gz"));
+        List<Sequence> results = parser.parse(new File("/tmp", "vertebrate_mammalian.95.rna.gbff.gz"));
         long end = System.currentTimeMillis();
         assertTrue(results != null);
         assertTrue(results.size() > 1);
         System.out.println(String.format("%d records", results.size()));
         System.out.println(String.format("%d millis", (end - start) / 1000));
-        for (GenBankInfo info : results) {
+        for (Sequence info : results) {
             System.out.println(info.toString());
         }
     }
