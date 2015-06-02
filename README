@@ -7,7 +7,7 @@ is utterly useless.
 Here is my attempt at providing one...
 
 GenBankParser parser = GenBankParser.getInstance();
-List<GenBankInfo> results = parser.parse(new File("/tmp", "single.gb.gz"));
+List<Sequence> results = parser.parse(new File("/tmp", "single.gb.gz"));
 
 NOTE: it expects gzipped files as inputs.
 
