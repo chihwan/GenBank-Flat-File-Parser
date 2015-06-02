@@ -8,11 +8,11 @@ import java.util.concurrent.Callable;
 import org.apache.commons.lang3.StringUtils;
 import org.renci.gbff.parser.model.Comment;
 import org.renci.gbff.parser.model.Feature;
-import org.renci.gbff.parser.model.GenBankInfo;
+import org.renci.gbff.parser.model.Sequence;
 import org.renci.gbff.parser.model.Origin;
 import org.renci.gbff.parser.model.Source;
 
-public class GenBankParserCallable implements Callable<GenBankInfo> {
+public class GenBankParserCallable implements Callable<Sequence> {
 
     public static final String LOCUS_TAG = "LOCUS";
 
@@ -64,8 +64,8 @@ public class GenBankParserCallable implements Callable<GenBankInfo> {
     }
 
     @Override
-    public GenBankInfo call() throws Exception {
-        GenBankInfo info = new GenBankInfo();
+    public Sequence call() throws Exception {
+        Sequence info = new Sequence();
 
         Iterator<String> lineIter = lines.iterator();
         while (lineIter.hasNext()) {
@@ -116,11 +116,30 @@ public class GenBankParserCallable implements Callable<GenBankInfo> {
                 StringBuilder sb = new StringBuilder();
                 sb.append(String.format("%s%n", line.substring(12, line.length())));
                 do {
-                    line = lineIter.next();
+                    line = lineIter.next().trim();
                     sb.append(String.format("%s%n", line));
                 } while (!line.trim().endsWith("."));
                 Comment comment = new Comment();
                 comment.setDescription(sb.toString());
+
+                while (!line.startsWith(FEATURES_TAG)) {
+                    line = lineIter.next().trim();
+                    if (line.startsWith("##Genome-Annotation-Data-START##")) {
+
+                        String key = null;
+                        do {
+                            line = lineIter.next().trim();
+                            if (line.contains("::")) {
+                                StringTokenizer st = new StringTokenizer(line, "::");
+                                key = st.nextToken().trim();
+                                comment.getGenomeAnnotations().setProperty(key, st.nextToken().trim());
+                            } else {
+                                comment.getGenomeAnnotations().setProperty(key,
+                                        String.format("%s %s", comment.getGenomeAnnotations().getProperty(key), line));
+                            }
+                        } while (!line.startsWith("##Genome-Annotation-Data-END##"));
+                    }
+                }
                 info.setComment(comment);
             }
 
