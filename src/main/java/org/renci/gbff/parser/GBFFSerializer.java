@@ -51,7 +51,11 @@ public class GBFFSerializer implements Runnable, Constants {
                     for (Object key : properties.keySet()) {
                         String value = properties.getProperty(key.toString()).replace("\n",
                                 "\n" + StringUtils.repeat(" ", 21));
-                        bw.write(String.format("%s/%s=\"%s\"%n", StringUtils.repeat(" ", 21), key, value));
+                        if ("codon_start".equals(key)) {
+                            bw.write(String.format("%s/%s=%s%n", StringUtils.repeat(" ", 21), key, value));
+                        } else {
+                            bw.write(String.format("%s/%s=\"%s\"%n", StringUtils.repeat(" ", 21), key, value));
+                        }
                     }
                 }
                 bw.write(String.format("%s%n", ORIGIN_TAG));
