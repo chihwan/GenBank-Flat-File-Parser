@@ -1,13 +1,13 @@
 # GenBank-Flat-File-Parser
-
+	
 I had a hard time finding a flat file parser for GenBank files in
 Java.  Biojava3 does it, but fails to model half of the fields...which
 is utterly useless.
 
 Here is my attempt at providing one...
 
-GenBankParser parser = GenBankParser.getInstance();
-List<Sequence> results = parser.parse(new File("/tmp", "single.gb.gz"));
+GBFFManager parser = GBFFManager.getInstance();
+List<Sequence> results = parser.deserialize(new File("/tmp", "single.gb.gz"));
 
 NOTE: it expects gzipped files as inputs.
 
@@ -48,3 +48,5 @@ Here is an example settings.xml:
     <activeProfile>dev</activeProfile>
   </activeProfiles>
 </settings>
+
+
