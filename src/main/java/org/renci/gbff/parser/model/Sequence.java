@@ -29,12 +29,12 @@ public class Sequence {
 
     public Sequence() {
         super();
+        references = new ArrayList<Reference>();
+        features = new ArrayList<Feature>();
+        origin = new ArrayList<Origin>();
     }
 
     public List<Reference> getReferences() {
-        if (references == null) {
-            references = new ArrayList<Reference>();
-        }
         return references;
     }
 
@@ -107,9 +107,6 @@ public class Sequence {
     }
 
     public List<Feature> getFeatures() {
-        if (features == null) {
-            features = new ArrayList<Feature>();
-        }
         return features;
     }
 
@@ -118,9 +115,6 @@ public class Sequence {
     }
 
     public List<Origin> getOrigin() {
-        if (origin == null) {
-            origin = new ArrayList<Origin>();
-        }
         return origin;
     }
 
@@ -130,8 +124,8 @@ public class Sequence {
 
     @Override
     public String toString() {
-        return String.format("GenBankInfo [accession=%s, version=%s, dbLink=%s, keywords=%s]", accession, version,
-                dbLink, keywords);
+        return String.format("Sequence [accession=%s, version=%s, dbLink=%s, keywords=%s]", accession, version, dbLink,
+                keywords);
     }
 
 }
