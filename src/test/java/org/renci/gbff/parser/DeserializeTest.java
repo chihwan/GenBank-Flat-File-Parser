@@ -6,9 +6,10 @@ import java.io.File;
 import java.util.List;
 
 import org.junit.Test;
-import org.renci.gbff.parser.model.Feature;
-import org.renci.gbff.parser.model.Sequence;
-import org.renci.gbff.parser.model.Origin;
+import org.renci.gbff.GBFFManager;
+import org.renci.gbff.model.Feature;
+import org.renci.gbff.model.Origin;
+import org.renci.gbff.model.Sequence;
 
 public class DeserializeTest {
 

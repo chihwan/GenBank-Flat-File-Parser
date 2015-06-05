@@ -6,7 +6,8 @@ import java.io.File;
 import java.util.List;
 
 import org.junit.Test;
-import org.renci.gbff.parser.model.Sequence;
+import org.renci.gbff.GBFFManager;
+import org.renci.gbff.model.Sequence;
 
 public class SerializeTest {
 
