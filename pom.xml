@@ -86,7 +86,7 @@
 	    <_removeheaders>Ignore-Package,Include-Resource,Private-Package,Bundle-DocURL</_removeheaders>
 	    <_failok>false</_failok>
 	    <Private-Package />
-            <Export-Package>org.renci.gbff.parser.*</Export-Package>
+            <Export-Package>org.renci.gbff.*</Export-Package>
             <Import-Package>*</Import-Package>	    
 	  </instructions>
 	</configuration>
