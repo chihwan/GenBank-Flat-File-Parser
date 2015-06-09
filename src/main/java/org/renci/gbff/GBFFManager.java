@@ -28,6 +28,10 @@ public class GBFFManager {
     }
 
     public List<Sequence> deserialize(File... gbFiles) {
+        return deserialize(null, gbFiles);
+    }
+
+    public List<Sequence> deserialize(Filter filter, File... gbFiles) {
         List<Sequence> ret = new ArrayList<Sequence>();
 
         for (File f : gbFiles) {
@@ -39,8 +43,10 @@ public class GBFFManager {
                 while ((line = br.readLine()) != null) {
                     if (line.startsWith("//")) {
                         try {
-                            Sequence info = new GBFFDeserializer(lines).call();
-                            ret.add(info);
+                            Sequence info = new GBFFDeserializer(lines, filter).call();
+                            if (info != null) {
+                                ret.add(info);
+                            }
                             lines.clear();
                         } catch (InterruptedException | ExecutionException e) {
                             e.printStackTrace();

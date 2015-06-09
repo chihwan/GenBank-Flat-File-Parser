@@ -16,20 +16,23 @@ public class GBFFDeserializer implements Callable<Sequence>, Constants {
 
     private LinkedList<String> lines;
 
-    public GBFFDeserializer(LinkedList<String> lines) {
+    private Filter filter;
+
+    public GBFFDeserializer(LinkedList<String> lines, Filter filter) {
         super();
         this.lines = lines;
+        this.filter = filter;
     }
 
     @Override
     public Sequence call() throws Exception {
-        Sequence info = new Sequence();
+        Sequence sequence = new Sequence();
 
         Iterator<String> lineIter = lines.iterator();
         while (lineIter.hasNext()) {
             String line = lineIter.next().trim();
             if (line.startsWith(LOCUS_TAG)) {
-                info.setLocus(line.substring(12, line.length()));
+                sequence.setLocus(line.substring(12, line.length()));
             }
 
             if (line.startsWith(DEFINITION_TAG)) {
@@ -39,25 +42,26 @@ public class GBFFDeserializer implements Callable<Sequence>, Constants {
                     line = lineIter.next();
                     sb.append(String.format("%s%n", line));
                 }
-                info.setDefinition(sb.toString().trim());
+                sequence.setDefinition(sb.toString().trim());
             }
 
             if (line.startsWith(ACCESSION_TAG)) {
-                info.setAccession(line.substring(12, line.length()));
+                String accession = line.substring(12, line.length());
+                sequence.setAccession(accession);
             }
 
             if (line.startsWith(VERSION_TAG)) {
-                info.setVersion(line.substring(12, line.length()));
+                sequence.setVersion(line.substring(12, line.length()));
             }
 
             if (line.startsWith(KEYWORDS_TAG)) {
-                info.setKeywords(line.substring(12, line.length()));
+                sequence.setKeywords(line.substring(12, line.length()));
             }
 
             if (line.startsWith(SOURCE_TAG)) {
                 Source source = new Source();
                 source.setDescription(line.substring(12, line.length()));
-                info.setSource(source);
+                sequence.setSource(source);
             }
 
             if (line.startsWith(ORGANISM_TAG)) {
@@ -67,7 +71,7 @@ public class GBFFDeserializer implements Callable<Sequence>, Constants {
                     line = lineIter.next().trim();
                     sb.append(String.format("%s%n", line));
                 } while (!line.endsWith("."));
-                info.getSource().setOrganism(sb.toString().trim());
+                sequence.getSource().setOrganism(sb.toString().trim());
             }
 
             if (line.startsWith(COMMENT_TAG)) {
@@ -98,7 +102,7 @@ public class GBFFDeserializer implements Callable<Sequence>, Constants {
                         } while (!line.startsWith("##Genome-Annotation-Data-END##"));
                     }
                 }
-                info.setComment(comment);
+                sequence.setComment(comment);
             }
 
             if (line.startsWith(FEATURES_TAG)) {
@@ -117,7 +121,7 @@ public class GBFFDeserializer implements Callable<Sequence>, Constants {
                         processFeatureQualifier(line.trim(), propName, feature, lineIter);
                     }
 
-                    info.getFeatures().add(feature);
+                    sequence.getFeatures().add(feature);
                 }
             }
 
@@ -132,14 +136,18 @@ public class GBFFDeserializer implements Callable<Sequence>, Constants {
                         sb.append(st.nextToken());
                     }
                     origin.setSequence(sb.toString());
-                    info.getOrigin().add(origin);
+                    sequence.getOrigin().add(origin);
                 }
 
             }
 
         }
 
-        return info;
+        if (filter != null && !filter.accept(sequence)) {
+            return null;
+        }
+
+        return sequence;
     }
 
     private void processFeatureQualifier(String line, String propName, Feature feature, Iterator<String> lineIter) {
