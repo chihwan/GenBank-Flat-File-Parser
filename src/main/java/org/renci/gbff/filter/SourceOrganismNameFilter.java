@@ -15,7 +15,7 @@ public class SourceOrganismNameFilter implements Filter {
 
     @Override
     public boolean accept(Sequence sequence) {
-        if (sequence.getSource() != null && StringUtils.isNoneEmpty(sequence.getSource().getOrganism())
+        if (sequence.getSource() != null && StringUtils.isNotEmpty(sequence.getSource().getOrganism())
                 && sequence.getSource().getOrganism().contains(organism)) {
             return true;
         }
