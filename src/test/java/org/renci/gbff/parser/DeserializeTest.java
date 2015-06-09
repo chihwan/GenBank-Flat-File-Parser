@@ -10,7 +10,8 @@ import org.junit.Test;
 import org.renci.gbff.Filter;
 import org.renci.gbff.GBFFManager;
 import org.renci.gbff.filter.AndFilter;
-import org.renci.gbff.filter.OrganismNameFilter;
+import org.renci.gbff.filter.FeatureSourceOrganismNameFilter;
+import org.renci.gbff.filter.SourceOrganismNameFilter;
 import org.renci.gbff.filter.SequenceAccessionPrefixFilter;
 import org.renci.gbff.model.Feature;
 import org.renci.gbff.model.Origin;
@@ -82,7 +83,7 @@ public class DeserializeTest {
         List<String> acceptablePrefixList = Arrays.asList(new String[] { "NM_" });
 
         List<Filter> filters = Arrays.asList(new Filter[] { new SequenceAccessionPrefixFilter(acceptablePrefixList),
-                new OrganismNameFilter("Homo sapiens") });
+                new SourceOrganismNameFilter("Homo sapiens"), new FeatureSourceOrganismNameFilter("Homo sapiens") });
         List<Sequence> results = parser.deserialize(new AndFilter(filters), new File("/tmp",
                 "vertebrate_mammalian.286.rna.gbff.gz"));
         long end = System.currentTimeMillis();
