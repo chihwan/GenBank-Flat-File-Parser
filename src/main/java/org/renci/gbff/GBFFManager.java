@@ -38,7 +38,7 @@ public class GBFFManager {
     public List<Sequence> deserialize(Filter filter, File... gbFiles) {
         List<Sequence> ret = new ArrayList<Sequence>();
         for (File f : gbFiles) {
-            logger.debug("deserializing: {}", f.getName());
+            logger.info("deserializing: {}", f.getName());
 
             long start = System.currentTimeMillis();
             try (BufferedReader br = new BufferedReader(new InputStreamReader(new GZIPInputStream(
