@@ -11,8 +11,12 @@ import org.renci.gbff.model.Feature;
 import org.renci.gbff.model.Origin;
 import org.renci.gbff.model.Sequence;
 import org.renci.gbff.model.Source;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public class GBFFDeserializer implements Callable<Sequence>, Constants {
+
+    private final Logger logger = LoggerFactory.getLogger(GBFFDeserializer.class);
 
     private LinkedList<String> lines;
 
@@ -138,14 +142,13 @@ public class GBFFDeserializer implements Callable<Sequence>, Constants {
                     origin.setSequence(sb.toString());
                     sequence.getOrigin().add(origin);
                 }
-
             }
-
         }
 
         if (filter != null && !filter.accept(sequence)) {
             return null;
         }
+        logger.debug(sequence.toString());
 
         return sequence;
     }

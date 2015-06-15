@@ -81,7 +81,6 @@ public class DeserializeTest {
         GBFFManager parser = GBFFManager.getInstance();
         long start = System.currentTimeMillis();
         List<String> acceptablePrefixList = Arrays.asList(new String[] { "NM_" });
-
         List<Filter> filters = Arrays.asList(new Filter[] { new SequenceAccessionPrefixFilter(acceptablePrefixList),
                 new SourceOrganismNameFilter("Homo sapiens"), new FeatureSourceOrganismNameFilter("Homo sapiens") });
         List<Sequence> results = parser.deserialize(new AndFilter(filters), new File("/tmp",
@@ -90,7 +89,6 @@ public class DeserializeTest {
         assertTrue(results != null);
         assertTrue(results.size() > 1);
         for (Sequence sequence : results) {
-            System.out.println(sequence.toString());
             assertTrue(sequence.getAccession().startsWith("NM"));
             assertTrue(sequence.getSource() != null);
             assertTrue(sequence.getSource().getOrganism().contains("Homo sapiens"));
@@ -98,4 +96,5 @@ public class DeserializeTest {
         System.out.println(String.format("%d records", results.size()));
         System.out.println(String.format("%d millis", (end - start) / 1000));
     }
+
 }

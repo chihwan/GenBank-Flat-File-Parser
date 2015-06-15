@@ -11,8 +11,12 @@ import java.util.concurrent.ExecutionException;
 import java.util.zip.GZIPInputStream;
 
 import org.renci.gbff.model.Sequence;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public class GBFFManager {
+
+    private final Logger logger = LoggerFactory.getLogger(GBFFManager.class);
 
     private static GBFFManager instance;
 
@@ -33,8 +37,10 @@ public class GBFFManager {
 
     public List<Sequence> deserialize(Filter filter, File... gbFiles) {
         List<Sequence> ret = new ArrayList<Sequence>();
-
         for (File f : gbFiles) {
+            logger.debug("deserializing: {}", f.getName());
+
+            long start = System.currentTimeMillis();
             try (BufferedReader br = new BufferedReader(new InputStreamReader(new GZIPInputStream(
                     new FileInputStream(f))))) {
                 String line;
@@ -57,6 +63,8 @@ public class GBFFManager {
             } catch (Exception e) {
                 e.printStackTrace();
             }
+            long end = System.currentTimeMillis();
+            logger.debug("duration: {} seconds", (end - start) / 1000);
         }
 
         return ret;
