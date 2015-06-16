@@ -25,11 +25,11 @@ public class GBFFDeserializer implements Callable<List<Sequence>>, Constants {
 
     private final Logger logger = LoggerFactory.getLogger(GBFFDeserializer.class);
 
-    private File inputFile;
+    private final File inputFile;
 
-    private Filter filter;
+    private final Filter filter;
 
-    public GBFFDeserializer(File inputFile, Filter filter) {
+    public GBFFDeserializer(final File inputFile, final Filter filter) {
         super();
         this.inputFile = inputFile;
         this.filter = filter;
@@ -40,11 +40,11 @@ public class GBFFDeserializer implements Callable<List<Sequence>>, Constants {
         logger.info("deserializing: {}", inputFile.getName());
         List<Sequence> ret = new ArrayList<Sequence>();
         long start = System.currentTimeMillis();
+        LinkedList<String> lines = new LinkedList<String>();
         try (BufferedReader br = new BufferedReader(new InputStreamReader(new GZIPInputStream(new FileInputStream(
                 inputFile))))) {
             String line;
-
-            LinkedList<String> lines = new LinkedList<String>();
+            lines.clear();
             while ((line = br.readLine()) != null) {
                 if (line.startsWith("//")) {
                     Sequence info = parseInputFile(lines);

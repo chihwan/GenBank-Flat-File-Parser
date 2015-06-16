@@ -12,6 +12,7 @@ import org.renci.gbff.Filter;
 import org.renci.gbff.GBFFManager;
 import org.renci.gbff.filter.AndFilter;
 import org.renci.gbff.filter.FeatureSourceOrganismNameFilter;
+import org.renci.gbff.filter.FeatureTypeNameFilter;
 import org.renci.gbff.filter.SequenceAccessionPrefixFilter;
 import org.renci.gbff.filter.SourceOrganismNameFilter;
 import org.renci.gbff.model.Feature;
@@ -104,7 +105,8 @@ public class DeserializeTest {
         long start = System.currentTimeMillis();
         List<String> acceptablePrefixList = Arrays.asList(new String[] { "NM_" });
         List<Filter> filters = Arrays.asList(new Filter[] { new SequenceAccessionPrefixFilter(acceptablePrefixList),
-                new SourceOrganismNameFilter("Homo sapiens"), new FeatureSourceOrganismNameFilter("Homo sapiens") });
+                new SourceOrganismNameFilter("Homo sapiens"), new FeatureSourceOrganismNameFilter("Homo sapiens"),
+                new FeatureTypeNameFilter("CDS"), new FeatureTypeNameFilter("source") });
 
         List<File> ret = new ArrayList<File>();
 
@@ -120,7 +122,7 @@ public class DeserializeTest {
         assertTrue(results != null);
         assertTrue(results.size() > 1);
         System.out.println(String.format("%d records", results.size()));
-        System.out.println(String.format("%d millis", (end - start) / 1000));
+        System.out.println(String.format("%d seconds", (end - start) / 1000));
     }
 
 }
