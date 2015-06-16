@@ -60,11 +60,14 @@ public class GBFFDeserializer implements Callable<List<Sequence>>, Constants {
         }
         long end = System.currentTimeMillis();
         logger.debug("duration: {} seconds", (end - start) / 1000);
+        System.gc();
         return ret;
     }
 
     private Sequence parseInputFile(LinkedList<String> lines) {
         Sequence sequence = new Sequence();
+
+        StringBuilder sb = new StringBuilder();
 
         Iterator<String> lineIter = lines.iterator();
         while (lineIter.hasNext()) {
@@ -73,8 +76,8 @@ public class GBFFDeserializer implements Callable<List<Sequence>>, Constants {
                 sequence.setLocus(line.substring(12, line.length()));
             }
 
+            sb.delete(0, sb.length());
             if (line.startsWith(DEFINITION_TAG)) {
-                StringBuilder sb = new StringBuilder();
                 sb.append(String.format("%s%n", line.substring(12, line.length())));
                 while (!line.trim().endsWith(".")) {
                     line = lineIter.next();
@@ -102,8 +105,8 @@ public class GBFFDeserializer implements Callable<List<Sequence>>, Constants {
                 sequence.setSource(source);
             }
 
+            sb.delete(0, sb.length());
             if (line.startsWith(ORGANISM_TAG)) {
-                StringBuilder sb = new StringBuilder();
                 sb.append(String.format("%s%n", line.substring(10, line.length())));
                 do {
                     line = lineIter.next().trim();
@@ -112,8 +115,8 @@ public class GBFFDeserializer implements Callable<List<Sequence>>, Constants {
                 sequence.getSource().setOrganism(sb.toString().trim());
             }
 
+            sb.delete(0, sb.length());
             if (line.startsWith(COMMENT_TAG)) {
-                StringBuilder sb = new StringBuilder();
                 sb.append(String.format("%s%n", line.substring(12, line.length())));
                 do {
                     line = lineIter.next().trim();
@@ -163,13 +166,13 @@ public class GBFFDeserializer implements Callable<List<Sequence>>, Constants {
                 }
             }
 
+            sb.delete(0, sb.length());
             if (line.startsWith(ORIGIN_TAG)) {
                 while (lineIter.hasNext()) {
                     line = lineIter.next().trim();
                     StringTokenizer st = new StringTokenizer(line, " ");
                     Origin origin = new Origin();
                     origin.setIndex(Integer.valueOf(st.nextToken()));
-                    StringBuilder sb = new StringBuilder();
                     while (st.hasMoreTokens()) {
                         sb.append(st.nextToken());
                     }
