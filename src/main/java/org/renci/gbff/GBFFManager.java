@@ -17,7 +17,7 @@ public class GBFFManager {
 
     private final Logger logger = LoggerFactory.getLogger(GBFFManager.class);
 
-    private int threads;
+    private final int threads;
 
     private static GBFFManager instance;
 
@@ -40,11 +40,11 @@ public class GBFFManager {
         this.threads = threads;
     }
 
-    public List<Sequence> deserialize(File... gbFiles) {
+    public List<Sequence> deserialize(final File... gbFiles) {
         return deserialize(null, gbFiles);
     }
 
-    public List<Sequence> deserialize(Filter filter, File... gbFiles) {
+    public List<Sequence> deserialize(final Filter filter, final File... gbFiles) {
         ExecutorService es = Executors.newFixedThreadPool(threads);
         List<Sequence> ret = new ArrayList<Sequence>();
         List<Future<List<Sequence>>> futures = new ArrayList<Future<List<Sequence>>>();
