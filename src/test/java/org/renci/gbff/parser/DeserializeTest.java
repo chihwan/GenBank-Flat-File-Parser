@@ -3,6 +3,7 @@ package org.renci.gbff.parser;
 import static org.junit.Assert.assertTrue;
 
 import java.io.File;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
@@ -11,8 +12,8 @@ import org.renci.gbff.Filter;
 import org.renci.gbff.GBFFManager;
 import org.renci.gbff.filter.AndFilter;
 import org.renci.gbff.filter.FeatureSourceOrganismNameFilter;
-import org.renci.gbff.filter.SourceOrganismNameFilter;
 import org.renci.gbff.filter.SequenceAccessionPrefixFilter;
+import org.renci.gbff.filter.SourceOrganismNameFilter;
 import org.renci.gbff.model.Feature;
 import org.renci.gbff.model.Origin;
 import org.renci.gbff.model.Sequence;
@@ -93,6 +94,31 @@ public class DeserializeTest {
             assertTrue(sequence.getSource() != null);
             assertTrue(sequence.getSource().getOrganism().contains("Homo sapiens"));
         }
+        System.out.println(String.format("%d records", results.size()));
+        System.out.println(String.format("%d millis", (end - start) / 1000));
+    }
+
+    @Test
+    public void testPerformance() {
+        GBFFManager parser = GBFFManager.getInstance();
+        long start = System.currentTimeMillis();
+        List<String> acceptablePrefixList = Arrays.asList(new String[] { "NM_" });
+        List<Filter> filters = Arrays.asList(new Filter[] { new SequenceAccessionPrefixFilter(acceptablePrefixList),
+                new SourceOrganismNameFilter("Homo sapiens"), new FeatureSourceOrganismNameFilter("Homo sapiens") });
+
+        List<File> ret = new ArrayList<File>();
+
+        File tmpDir = new File("/tmp");
+        for (File f : tmpDir.listFiles()) {
+            if (f.getName().startsWith("vertebrate_mammalian")) {
+                ret.add(f);
+            }
+        }
+
+        List<Sequence> results = parser.deserialize(new AndFilter(filters), ret.toArray(new File[ret.size()]));
+        long end = System.currentTimeMillis();
+        assertTrue(results != null);
+        assertTrue(results.size() > 1);
         System.out.println(String.format("%d records", results.size()));
         System.out.println(String.format("%d millis", (end - start) / 1000));
     }

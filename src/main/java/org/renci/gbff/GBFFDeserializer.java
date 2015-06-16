@@ -1,9 +1,16 @@
 package org.renci.gbff;
 
+import java.io.BufferedReader;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.InputStreamReader;
+import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.LinkedList;
+import java.util.List;
 import java.util.StringTokenizer;
 import java.util.concurrent.Callable;
+import java.util.zip.GZIPInputStream;
 
 import org.apache.commons.lang3.StringUtils;
 import org.renci.gbff.model.Comment;
@@ -14,22 +21,49 @@ import org.renci.gbff.model.Source;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-public class GBFFDeserializer implements Callable<Sequence>, Constants {
+public class GBFFDeserializer implements Callable<List<Sequence>>, Constants {
 
     private final Logger logger = LoggerFactory.getLogger(GBFFDeserializer.class);
 
-    private LinkedList<String> lines;
+    private File inputFile;
 
     private Filter filter;
 
-    public GBFFDeserializer(LinkedList<String> lines, Filter filter) {
+    public GBFFDeserializer(File inputFile, Filter filter) {
         super();
-        this.lines = lines;
+        this.inputFile = inputFile;
         this.filter = filter;
     }
 
     @Override
-    public Sequence call() throws Exception {
+    public List<Sequence> call() throws Exception {
+        logger.info("deserializing: {}", inputFile.getName());
+        List<Sequence> ret = new ArrayList<Sequence>();
+        long start = System.currentTimeMillis();
+        try (BufferedReader br = new BufferedReader(new InputStreamReader(new GZIPInputStream(new FileInputStream(
+                inputFile))))) {
+            String line;
+
+            LinkedList<String> lines = new LinkedList<String>();
+            while ((line = br.readLine()) != null) {
+                if (line.startsWith("//")) {
+                    Sequence info = parseInputFile(lines);
+                    if (info != null) {
+                        ret.add(info);
+                    }
+                    lines.clear();
+                }
+                lines.add(String.format("%s%n", line));
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        long end = System.currentTimeMillis();
+        logger.debug("duration: {} seconds", (end - start) / 1000);
+        return ret;
+    }
+
+    private Sequence parseInputFile(LinkedList<String> lines) {
         Sequence sequence = new Sequence();
 
         Iterator<String> lineIter = lines.iterator();

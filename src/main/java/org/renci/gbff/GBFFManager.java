@@ -1,14 +1,13 @@
 package org.renci.gbff;
 
-import java.io.BufferedReader;
 import java.io.File;
-import java.io.FileInputStream;
-import java.io.InputStreamReader;
 import java.util.ArrayList;
-import java.util.LinkedList;
 import java.util.List;
 import java.util.concurrent.ExecutionException;
-import java.util.zip.GZIPInputStream;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
+import java.util.concurrent.Future;
+import java.util.concurrent.TimeUnit;
 
 import org.renci.gbff.model.Sequence;
 import org.slf4j.Logger;
@@ -36,37 +35,27 @@ public class GBFFManager {
     }
 
     public List<Sequence> deserialize(Filter filter, File... gbFiles) {
+        ExecutorService es = Executors.newFixedThreadPool(8);
         List<Sequence> ret = new ArrayList<Sequence>();
-        for (File f : gbFiles) {
-            logger.info("deserializing: {}", f.getName());
-
-            long start = System.currentTimeMillis();
-            try (BufferedReader br = new BufferedReader(new InputStreamReader(new GZIPInputStream(
-                    new FileInputStream(f))))) {
-                String line;
-
-                LinkedList<String> lines = new LinkedList<String>();
-                while ((line = br.readLine()) != null) {
-                    if (line.startsWith("//")) {
-                        try {
-                            Sequence info = new GBFFDeserializer(lines, filter).call();
-                            if (info != null) {
-                                ret.add(info);
-                            }
-                            lines.clear();
-                        } catch (InterruptedException | ExecutionException e) {
-                            e.printStackTrace();
-                        }
-                    }
-                    lines.add(String.format("%s%n", line));
-                }
-            } catch (Exception e) {
-                e.printStackTrace();
+        List<Future<List<Sequence>>> futures = new ArrayList<Future<List<Sequence>>>();
+        try {
+            for (File f : gbFiles) {
+                futures.add(es.submit(new GBFFDeserializer(f, filter)));
             }
-            long end = System.currentTimeMillis();
-            logger.debug("duration: {} seconds", (end - start) / 1000);
+            es.shutdown();
+            es.awaitTermination(5L, TimeUnit.MINUTES);
+        } catch (InterruptedException e) {
+            e.printStackTrace();
         }
 
+        for (Future<List<Sequence>> future : futures) {
+            try {
+                ret.addAll(future.get());
+            } catch (InterruptedException | ExecutionException e) {
+                e.printStackTrace();
+            }
+        }
+        logger.info("ret.size(): {}", ret.size());
         return ret;
     }
 
