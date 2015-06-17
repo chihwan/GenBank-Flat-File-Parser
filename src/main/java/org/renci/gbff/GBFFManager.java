@@ -57,16 +57,11 @@ public class GBFFManager {
             }
             es.shutdown();
             es.awaitTermination(5L, TimeUnit.MINUTES);
-        } catch (InterruptedException e) {
-            e.printStackTrace();
-        }
-
-        for (Future<List<Sequence>> future : futures) {
-            try {
+            for (Future<List<Sequence>> future : futures) {
                 ret.addAll(future.get());
-            } catch (InterruptedException | ExecutionException e) {
-                e.printStackTrace();
             }
+        } catch (InterruptedException | ExecutionException e) {
+            e.printStackTrace();
         }
         logger.info("ret.size(): {}", ret.size());
         return ret;
