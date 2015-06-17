@@ -51,8 +51,10 @@ public class GBFFDeserializer implements Callable<List<Sequence>>, Constants {
         List<Sequence> ret = new ArrayList<Sequence>();
         long start = System.currentTimeMillis();
         LinkedList<String> lines = new LinkedList<String>();
-        try (BufferedReader br = new BufferedReader(new InputStreamReader(new GZIPInputStream(new FileInputStream(
-                inputFile))))) {
+        try (FileInputStream fis = new FileInputStream(inputFile);
+                GZIPInputStream gis = new GZIPInputStream(fis);
+                InputStreamReader isr = new InputStreamReader(gis);
+                BufferedReader br = new BufferedReader(isr)) {
             String line;
             lines.clear();
             while ((line = br.readLine()) != null) {
