@@ -19,25 +19,28 @@ public class GBFFManager {
 
     private final int threads;
 
+    private final boolean skipOrigin;
+
     private static GBFFManager instance;
 
-    public static GBFFManager getInstance(int threads) {
+    public static GBFFManager getInstance(int threads, boolean skipOrigin) {
         if (instance == null) {
-            instance = new GBFFManager(threads);
+            instance = new GBFFManager(threads, skipOrigin);
         }
         return instance;
     }
 
     public static GBFFManager getInstance() {
         if (instance == null) {
-            instance = new GBFFManager(2);
+            instance = new GBFFManager(2, false);
         }
         return instance;
     }
 
-    private GBFFManager(int threads) {
+    private GBFFManager(int threads, boolean skipOrigin) {
         super();
         this.threads = threads;
+        this.skipOrigin = skipOrigin;
     }
 
     public List<Sequence> deserialize(final File... gbFiles) {
@@ -50,7 +53,7 @@ public class GBFFManager {
         List<Future<List<Sequence>>> futures = new ArrayList<Future<List<Sequence>>>();
         try {
             for (File f : gbFiles) {
-                futures.add(es.submit(new GBFFDeserializer(f, filter)));
+                futures.add(es.submit(new GBFFDeserializer(f, filter, skipOrigin)));
             }
             es.shutdown();
             es.awaitTermination(5L, TimeUnit.MINUTES);

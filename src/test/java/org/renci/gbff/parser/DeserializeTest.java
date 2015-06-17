@@ -101,7 +101,7 @@ public class DeserializeTest {
 
     @Test
     public void testPerformance() {
-        GBFFManager parser = GBFFManager.getInstance(8);
+        GBFFManager parser = GBFFManager.getInstance(8, true);
         long start = System.currentTimeMillis();
         List<String> acceptablePrefixList = Arrays.asList(new String[] { "NM_" });
         List<Filter> filters = Arrays.asList(new Filter[] { new SequenceAccessionPrefixFilter(acceptablePrefixList),

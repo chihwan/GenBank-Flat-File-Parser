@@ -29,10 +29,20 @@ public class GBFFDeserializer implements Callable<List<Sequence>>, Constants {
 
     private final Filter filter;
 
+    private final boolean skipOrigin;
+
     public GBFFDeserializer(final File inputFile, final Filter filter) {
         super();
         this.inputFile = inputFile;
         this.filter = filter;
+        this.skipOrigin = false;
+    }
+
+    public GBFFDeserializer(File inputFile, Filter filter, boolean skipOrigin) {
+        super();
+        this.inputFile = inputFile;
+        this.filter = filter;
+        this.skipOrigin = skipOrigin;
     }
 
     @Override
@@ -166,18 +176,20 @@ public class GBFFDeserializer implements Callable<List<Sequence>>, Constants {
                 }
             }
 
-            sb.delete(0, sb.length());
-            if (line.startsWith(ORIGIN_TAG)) {
-                while (lineIter.hasNext()) {
-                    line = lineIter.next().trim();
-                    StringTokenizer st = new StringTokenizer(line, " ");
-                    Origin origin = new Origin();
-                    origin.setIndex(Integer.valueOf(st.nextToken()));
-                    while (st.hasMoreTokens()) {
-                        sb.append(st.nextToken());
+            if (!skipOrigin) {
+                sb.delete(0, sb.length());
+                if (line.startsWith(ORIGIN_TAG)) {
+                    while (lineIter.hasNext()) {
+                        line = lineIter.next().trim();
+                        StringTokenizer st = new StringTokenizer(line, " ");
+                        Origin origin = new Origin();
+                        origin.setIndex(Integer.valueOf(st.nextToken()));
+                        while (st.hasMoreTokens()) {
+                            sb.append(st.nextToken());
+                        }
+                        origin.setSequence(sb.toString());
+                        sequence.getOrigin().add(origin);
                     }
-                    origin.setSequence(sb.toString());
-                    sequence.getOrigin().add(origin);
                 }
             }
         }
