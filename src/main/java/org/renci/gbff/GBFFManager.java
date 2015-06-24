@@ -63,7 +63,7 @@ public class GBFFManager {
         } catch (InterruptedException | ExecutionException e) {
             e.printStackTrace();
         }
-        logger.info("ret.size(): {}", ret.size());
+        logger.debug("ret.size(): {}", ret.size());
         return ret;
     }
 
