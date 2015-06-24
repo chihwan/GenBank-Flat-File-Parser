@@ -2,7 +2,7 @@
   <parent>
     <groupId>org.renci</groupId>
     <artifactId>parent</artifactId>
-    <version>0.0.3</version>    
+    <version>0.0.8</version>
   </parent>
   <name>GenBank Flat File Parser</name>
   <modelVersion>4.0.0</modelVersion>
