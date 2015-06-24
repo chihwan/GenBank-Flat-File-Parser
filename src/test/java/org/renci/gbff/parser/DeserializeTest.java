@@ -16,7 +16,6 @@ import org.renci.gbff.filter.FeatureTypeNameFilter;
 import org.renci.gbff.filter.SequenceAccessionPrefixFilter;
 import org.renci.gbff.filter.SourceOrganismNameFilter;
 import org.renci.gbff.model.Feature;
-import org.renci.gbff.model.Origin;
 import org.renci.gbff.model.Sequence;
 
 public class DeserializeTest {
@@ -25,21 +24,18 @@ public class DeserializeTest {
     public void testSingle() {
         GBFFManager parser = GBFFManager.getInstance();
         long start = System.currentTimeMillis();
-        List<Sequence> results = parser.deserialize(new File("/tmp", "single.gb.gz"));
+        List<Sequence> results = parser.deserialize(new File("/tmp", "vertebrate_mammalian.286.rna.gbff.gz"));
         long end = System.currentTimeMillis();
         assertTrue(results != null);
-        assertTrue(results.size() == 1);
         System.out.println(String.format("%d seconds", (end - start) / 1000));
-        System.out.println(results.get(0).toString());
-        System.out.printf("ORGANISM: %s%n", results.get(0).getSource().getOrganism());
-        for (Feature feature : results.get(0).getFeatures()) {
-            System.out.println(feature.toString());
-            for (Object key : feature.getQualifiers().keySet()) {
-                System.out.println(String.format("%s = %s", key, feature.getQualifiers().getProperty(key.toString())));
+        asdf: for (Sequence sequence : results) {
+            System.out.println(sequence.toString());
+            for (Feature feature : sequence.getFeatures()) {
+                if (feature.getLocation().contains("order")) {
+                    System.out.println(feature.toString());
+                    break asdf;
+                }
             }
-        }
-        for (Origin origin : results.get(0).getOrigin()) {
-            System.out.println(origin.toString());
         }
     }
 
