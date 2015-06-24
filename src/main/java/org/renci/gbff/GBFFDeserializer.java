@@ -163,7 +163,20 @@ public class GBFFDeserializer implements Callable<List<Sequence>>, Constants {
                 while (!line.startsWith(ORIGIN_TAG)) {
                     Feature feature = new Feature();
                     feature.setType(line.substring(5, 20).trim());
-                    feature.setLocation(line.substring(21, line.length()).trim());
+                    sb.delete(0, sb.length());
+
+                    String locationValue = line.substring(21, line.length()).trim();
+                    if (locationValue.startsWith("join") || locationValue.startsWith("order")) {
+                        sb.append(locationValue);
+                        while (!line.trim().endsWith(")")) {
+                            line = lineIter.next().trim();
+                            sb.append(String.format("%s", line));
+                        }
+                    } else {
+                        sb.append(locationValue);
+                    }
+
+                    feature.setLocation(sb.toString());
 
                     String propName = null;
                     line = lineIter.next();
