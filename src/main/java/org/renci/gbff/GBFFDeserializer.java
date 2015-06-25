@@ -186,7 +186,7 @@ public class GBFFDeserializer implements Callable<List<Sequence>>, Constants {
                         line = lineIter.next();
                         processFeatureQualifier(line.trim(), propName, feature, lineIter);
                     }
-
+                    // logger.debug(feature.toString());
                     sequence.getFeatures().add(feature);
                 }
             }
@@ -224,24 +224,30 @@ public class GBFFDeserializer implements Callable<List<Sequence>>, Constants {
 
             if (!line.contains("\"")) {
                 // probably numeric
-                feature.getQualifiers().setProperty(propName, line.split("=")[1]);
+                String value = line.split("=")[1];
+                logger.debug("key = {}, value = {}", propName, value);
+                feature.getQualifiers().setProperty(propName, value);
                 return;
             }
 
             if (line.endsWith("\"")) {
                 // single line string value
-                feature.getQualifiers().setProperty(propName, line.split("=")[1].replace("\"", ""));
+                String value = line.split("=")[1].replace("\"", "").replace("\n", " ");
+                logger.debug("key = {}, value = {}", propName, value);
+                feature.getQualifiers().setProperty(propName, value);
                 return;
             }
 
             if (!line.endsWith("\"")) {
                 // multiline value
-                StringBuilder sb = new StringBuilder(String.format("%s%n", line.split("=")[1]));
+                StringBuilder sb = new StringBuilder(String.format("%s", line.split("=")[1]));
                 do {
                     line = lineIter.next();
-                    sb.append(String.format("%s%n", line.trim()));
+                    sb.append(String.format(" %s", line.trim()));
                 } while (!line.trim().endsWith("\""));
-                feature.getQualifiers().setProperty(propName, sb.toString().trim().replace("\"", ""));
+                String value = sb.toString().trim().replace("\"", "");
+                logger.debug("key = {}, value = {}", propName, value);
+                feature.getQualifiers().setProperty(propName, value);
             }
 
         }

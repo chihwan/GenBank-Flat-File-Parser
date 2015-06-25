@@ -28,15 +28,12 @@ public class DeserializeTest {
         long end = System.currentTimeMillis();
         assertTrue(results != null);
         System.out.println(String.format("%d seconds", (end - start) / 1000));
-        asdf: for (Sequence sequence : results) {
-            System.out.println(sequence.toString());
-            for (Feature feature : sequence.getFeatures()) {
-                if (feature.getLocation().contains("order")) {
-                    System.out.println(feature.toString());
-                    break asdf;
-                }
-            }
-        }
+        // for (Sequence sequence : results) {
+        // System.out.println(sequence.toString());
+        // for (Feature feature : sequence.getFeatures()) {
+        // System.out.println(feature.toString());
+        // }
+        // }
     }
 
     @Test
