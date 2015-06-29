@@ -13,9 +13,12 @@ public class Feature implements Serializable {
 
     private Properties qualifiers;
 
+    private Properties DBXrefs;
+
     public Feature() {
         super();
         this.qualifiers = new Properties();
+        this.DBXrefs = new Properties();
     }
 
     public String getType() {
@@ -40,6 +43,14 @@ public class Feature implements Serializable {
 
     public void setQualifiers(Properties qualifiers) {
         this.qualifiers = qualifiers;
+    }
+
+    public Properties getDBXrefs() {
+        return DBXrefs;
+    }
+
+    public void setDBXrefs(Properties dBXrefs) {
+        this.DBXrefs = dBXrefs;
     }
 
     @Override
