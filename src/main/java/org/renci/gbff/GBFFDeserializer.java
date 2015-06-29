@@ -218,6 +218,15 @@ public class GBFFDeserializer implements Callable<List<Sequence>>, Constants {
     }
 
     private void processFeatureQualifier(String line, String propName, Feature feature, Iterator<String> lineIter) {
+
+        if (line.startsWith("/db_xref") && line.endsWith("\"")) {
+            String value = line.split("=")[1].replace("\"", "").replace("\n", " ");
+            String[] valueSplit = value.split(":");
+            logger.debug("key = {}, value = {}", valueSplit[0], valueSplit[1]);
+            feature.getDBXrefs().setProperty(valueSplit[0], valueSplit[1]);
+            return;
+        }
+
         if (line.startsWith("/") && line.contains("=")) {
             propName = line.split("=")[0];
             propName = propName.substring(1, propName.length());
@@ -248,6 +257,28 @@ public class GBFFDeserializer implements Callable<List<Sequence>>, Constants {
                 String value = sb.toString().trim().replace("\"", "");
                 logger.debug("key = {}, value = {}", propName, value);
                 feature.getQualifiers().setProperty(propName, value);
+            }
+
+        }
+
+    }
+
+    private void processFeatureDBXRefs(String line, String propName, Feature feature, Iterator<String> lineIter) {
+
+        if (!line.startsWith("/db_xref")) {
+            return;
+        }
+
+        if (line.startsWith("/") && line.contains("=")) {
+            propName = line.split("=")[0];
+            propName = propName.substring(1, propName.length());
+
+            if (line.endsWith("\"")) {
+                // single line string value
+                String value = line.split("=")[1].replace("\"", "").replace("\n", " ");
+                logger.debug("key = {}, value = {}", propName, value);
+                feature.getDBXrefs().setProperty(propName, value);
+                return;
             }
 
         }
