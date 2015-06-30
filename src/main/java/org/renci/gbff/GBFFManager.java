@@ -47,7 +47,7 @@ public class GBFFManager {
         return deserialize(null, gbFiles);
     }
 
-    public List<Sequence> deserialize(final Filter filter, final File... gbFiles) {
+    public List<Sequence> deserialize(final GBFFFilter filter, final File... gbFiles) {
         ExecutorService es = Executors.newFixedThreadPool(threads);
         List<Sequence> ret = new ArrayList<Sequence>();
         List<Future<List<Sequence>>> futures = new ArrayList<Future<List<Sequence>>>();

@@ -27,18 +27,18 @@ public class GBFFDeserializer implements Callable<List<Sequence>>, Constants {
 
     private final File inputFile;
 
-    private final Filter filter;
+    private final GBFFFilter filter;
 
     private final boolean skipOrigin;
 
-    public GBFFDeserializer(final File inputFile, final Filter filter) {
+    public GBFFDeserializer(final File inputFile, final GBFFFilter filter) {
         super();
         this.inputFile = inputFile;
         this.filter = filter;
         this.skipOrigin = false;
     }
 
-    public GBFFDeserializer(File inputFile, Filter filter, boolean skipOrigin) {
+    public GBFFDeserializer(File inputFile, GBFFFilter filter, boolean skipOrigin) {
         super();
         this.inputFile = inputFile;
         this.filter = filter;
