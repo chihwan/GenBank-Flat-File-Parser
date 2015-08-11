@@ -1,0 +1,15 @@
+<document>
+  <body>
+    <section name="About">
+      <p>GenBank Flat File Parser</p>
+    </section>
+    <subsection name="Example Usage">
+      <source>
+<![CDATA[	
+GBFFManager parser = GBFFManager.getInstance();
+List<Sequence> results = parser.deserialize(new File("/tmp", "single.gb.gz"));
+]]>
+      </source>
+    </subsection>          
+  </body>
+</document>
