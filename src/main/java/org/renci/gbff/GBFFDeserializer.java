@@ -1,5 +1,17 @@
 package org.renci.gbff;
 
+import static org.renci.gbff.Constants.ACCESSION_TAG;
+import static org.renci.gbff.Constants.COMMENT_TAG;
+import static org.renci.gbff.Constants.DEFINITION_TAG;
+import static org.renci.gbff.Constants.FEATURES_TAG;
+import static org.renci.gbff.Constants.KEYWORDS_TAG;
+import static org.renci.gbff.Constants.LOCUS_TAG;
+import static org.renci.gbff.Constants.ORGANISM_TAG;
+import static org.renci.gbff.Constants.ORIGIN_TAG;
+import static org.renci.gbff.Constants.SOURCE_TAG;
+import static org.renci.gbff.Constants.VERSION_TAG;
+
+import java.io.BufferedInputStream;
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileInputStream;
@@ -12,18 +24,15 @@ import java.util.StringTokenizer;
 import java.util.concurrent.Callable;
 import java.util.zip.GZIPInputStream;
 
+import org.apache.commons.compress.compressors.gzip.GzipCompressorInputStream;
 import org.apache.commons.lang3.StringUtils;
 import org.renci.gbff.model.Comment;
 import org.renci.gbff.model.Feature;
 import org.renci.gbff.model.Origin;
 import org.renci.gbff.model.Sequence;
 import org.renci.gbff.model.Source;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
-public class GBFFDeserializer implements Callable<List<Sequence>>, Constants {
-
-    private final Logger logger = LoggerFactory.getLogger(GBFFDeserializer.class);
+public class GBFFDeserializer implements Callable<List<Sequence>> {
 
     private final File inputFile;
 
@@ -47,16 +56,15 @@ public class GBFFDeserializer implements Callable<List<Sequence>>, Constants {
 
     @Override
     public List<Sequence> call() throws Exception {
-        logger.info("deserializing: {}", inputFile.getName());
         List<Sequence> ret = new ArrayList<Sequence>();
-        long start = System.currentTimeMillis();
-        LinkedList<String> lines = new LinkedList<String>();
-        try (FileInputStream fis = new FileInputStream(inputFile);
-                GZIPInputStream gis = new GZIPInputStream(fis);
-                InputStreamReader isr = new InputStreamReader(gis);
+
+        try (FileInputStream fin = new FileInputStream(inputFile);
+                BufferedInputStream in = new BufferedInputStream(fin);
+                GzipCompressorInputStream gzIn = new GzipCompressorInputStream(in);
+                InputStreamReader isr = new InputStreamReader(gzIn);
                 BufferedReader br = new BufferedReader(isr)) {
+            LinkedList<String> lines = new LinkedList<String>();
             String line;
-            lines.clear();
             while ((line = br.readLine()) != null) {
                 if (line.startsWith("//")) {
                     Sequence info = parseInputFile(lines);
@@ -68,10 +76,17 @@ public class GBFFDeserializer implements Callable<List<Sequence>>, Constants {
                 lines.add(String.format("%s%n", line));
             }
         } catch (Exception e) {
+            System.out.printf("inputFile: %s%n", inputFile.getAbsolutePath());
             e.printStackTrace();
         }
-        long end = System.currentTimeMillis();
-        logger.debug("duration: {} seconds", (end - start) / 1000);
+
+        // try (FileInputStream fis = new FileInputStream(inputFile);
+        // GZIPInputStream gis = new GZIPInputStream(fis);
+        // InputStreamReader isr = new InputStreamReader(gis);
+        // BufferedReader br = new BufferedReader(isr)) {
+        // } catch (Exception e) {
+        // e.printStackTrace();
+        // }
         System.gc();
         return ret;
     }
@@ -147,10 +162,10 @@ public class GBFFDeserializer implements Callable<List<Sequence>>, Constants {
                             if (line.contains("::")) {
                                 StringTokenizer st = new StringTokenizer(line, "::");
                                 key = st.nextToken().trim();
-                                comment.getGenomeAnnotations().setProperty(key, st.nextToken().trim());
+                                comment.getGenomeAnnotations().put(key, st.nextToken().trim());
                             } else {
-                                comment.getGenomeAnnotations().setProperty(key,
-                                        String.format("%s %s", comment.getGenomeAnnotations().getProperty(key), line));
+                                comment.getGenomeAnnotations().put(key,
+                                        String.format("%s %s", comment.getGenomeAnnotations().get(key), line));
                             }
                         } while (!line.startsWith("##Genome-Annotation-Data-END##"));
                     }
@@ -186,7 +201,6 @@ public class GBFFDeserializer implements Callable<List<Sequence>>, Constants {
                         line = lineIter.next();
                         processFeatureQualifier(line.trim(), propName, feature, lineIter);
                     }
-                    // logger.debug(feature.toString());
                     sequence.getFeatures().add(feature);
                 }
             }
@@ -212,8 +226,6 @@ public class GBFFDeserializer implements Callable<List<Sequence>>, Constants {
         if (filter != null && !filter.accept(sequence)) {
             return null;
         }
-        logger.debug(sequence.toString());
-
         return sequence;
     }
 
@@ -222,8 +234,7 @@ public class GBFFDeserializer implements Callable<List<Sequence>>, Constants {
         if (line.startsWith("/db_xref") && line.endsWith("\"")) {
             String value = line.split("=")[1].replace("\"", "").replace("\n", " ");
             String[] valueSplit = value.split(":");
-            logger.debug("key = {}, value = {}", valueSplit[0], valueSplit[1]);
-            feature.getDBXrefs().setProperty(valueSplit[0], valueSplit[1]);
+            feature.getDBXrefs().put(valueSplit[0], valueSplit[1]);
             return;
         }
 
@@ -234,16 +245,14 @@ public class GBFFDeserializer implements Callable<List<Sequence>>, Constants {
             if (!line.contains("\"")) {
                 // probably numeric
                 String value = line.split("=")[1];
-                logger.debug("key = {}, value = {}", propName, value);
-                feature.getQualifiers().setProperty(propName, value);
+                feature.getQualifiers().put(propName, value);
                 return;
             }
 
             if (line.endsWith("\"")) {
                 // single line string value
                 String value = line.split("=")[1].replace("\"", "").replace("\n", " ");
-                logger.debug("key = {}, value = {}", propName, value);
-                feature.getQualifiers().setProperty(propName, value);
+                feature.getQualifiers().put(propName, value);
                 return;
             }
 
@@ -255,30 +264,7 @@ public class GBFFDeserializer implements Callable<List<Sequence>>, Constants {
                     sb.append(String.format(" %s", line.trim()));
                 } while (!line.trim().endsWith("\""));
                 String value = sb.toString().trim().replace("\"", "");
-                logger.debug("key = {}, value = {}", propName, value);
-                feature.getQualifiers().setProperty(propName, value);
-            }
-
-        }
-
-    }
-
-    private void processFeatureDBXRefs(String line, String propName, Feature feature, Iterator<String> lineIter) {
-
-        if (!line.startsWith("/db_xref")) {
-            return;
-        }
-
-        if (line.startsWith("/") && line.contains("=")) {
-            propName = line.split("=")[0];
-            propName = propName.substring(1, propName.length());
-
-            if (line.endsWith("\"")) {
-                // single line string value
-                String value = line.split("=")[1].replace("\"", "").replace("\n", " ");
-                logger.debug("key = {}, value = {}", propName, value);
-                feature.getDBXrefs().setProperty(propName, value);
-                return;
+                feature.getQualifiers().put(propName, value);
             }
 
         }
