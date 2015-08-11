@@ -10,12 +10,8 @@ import java.util.concurrent.Future;
 import java.util.concurrent.TimeUnit;
 
 import org.renci.gbff.model.Sequence;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 public class GBFFManager {
-
-    private final Logger logger = LoggerFactory.getLogger(GBFFManager.class);
 
     private final int threads;
 
@@ -63,7 +59,6 @@ public class GBFFManager {
         } catch (InterruptedException | ExecutionException e) {
             e.printStackTrace();
         }
-        logger.debug("ret.size(): {}", ret.size());
         return ret;
     }
 
