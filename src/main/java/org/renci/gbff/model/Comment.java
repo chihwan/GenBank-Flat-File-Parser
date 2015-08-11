@@ -1,7 +1,8 @@
 package org.renci.gbff.model;
 
 import java.io.Serializable;
-import java.util.Properties;
+import java.util.HashMap;
+import java.util.Map;
 
 public class Comment implements Serializable {
 
@@ -9,11 +10,11 @@ public class Comment implements Serializable {
 
     private String description;
 
-    private Properties genomeAnnotations;
+    private Map<String, String> genomeAnnotations;
 
     public Comment() {
         super();
-        this.genomeAnnotations = new Properties();
+        this.genomeAnnotations = new HashMap<String, String>(20);
     }
 
     public String getDescription() {
@@ -24,11 +25,11 @@ public class Comment implements Serializable {
         this.description = description;
     }
 
-    public Properties getGenomeAnnotations() {
+    public Map<String, String> getGenomeAnnotations() {
         return genomeAnnotations;
     }
 
-    public void setGenomeAnnotations(Properties genomeAnnotations) {
+    public void setGenomeAnnotations(Map<String, String> genomeAnnotations) {
         this.genomeAnnotations = genomeAnnotations;
     }
 

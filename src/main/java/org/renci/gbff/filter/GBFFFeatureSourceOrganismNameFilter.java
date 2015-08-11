@@ -17,7 +17,7 @@ public class GBFFFeatureSourceOrganismNameFilter implements GBFFFilter {
     public boolean accept(Sequence sequence) {
         for (Feature feature : sequence.getFeatures()) {
             if ("source".equals(feature.getType()) && feature.getQualifiers().containsKey("organism")
-                    && feature.getQualifiers().getProperty("organism").contains(organism)) {
+                    && feature.getQualifiers().get("organism").contains(organism)) {
                 return true;
             }
         }

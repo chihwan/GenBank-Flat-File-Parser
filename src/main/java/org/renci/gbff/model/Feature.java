@@ -1,7 +1,8 @@
 package org.renci.gbff.model;
 
 import java.io.Serializable;
-import java.util.Properties;
+import java.util.HashMap;
+import java.util.Map;
 
 public class Feature implements Serializable {
 
@@ -11,14 +12,14 @@ public class Feature implements Serializable {
 
     private String location;
 
-    private Properties qualifiers;
+    private Map<String, String> qualifiers;
 
-    private Properties DBXrefs;
+    private Map<String, String> DBXrefs;
 
     public Feature() {
         super();
-        this.qualifiers = new Properties();
-        this.DBXrefs = new Properties();
+        this.qualifiers = new HashMap<String, String>(20);
+        this.DBXrefs = new HashMap<String, String>(20);
     }
 
     public String getType() {
@@ -37,20 +38,20 @@ public class Feature implements Serializable {
         this.location = location;
     }
 
-    public Properties getQualifiers() {
+    public Map<String, String> getQualifiers() {
         return qualifiers;
     }
 
-    public void setQualifiers(Properties qualifiers) {
+    public void setQualifiers(Map<String, String> qualifiers) {
         this.qualifiers = qualifiers;
     }
 
-    public Properties getDBXrefs() {
+    public Map<String, String> getDBXrefs() {
         return DBXrefs;
     }
 
-    public void setDBXrefs(Properties dBXrefs) {
-        this.DBXrefs = dBXrefs;
+    public void setDBXrefs(Map<String, String> dBXrefs) {
+        DBXrefs = dBXrefs;
     }
 
     @Override
