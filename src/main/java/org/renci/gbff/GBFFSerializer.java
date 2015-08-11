@@ -6,7 +6,7 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.OutputStreamWriter;
 import java.util.List;
-import java.util.Properties;
+import java.util.Map;
 import java.util.zip.GZIPOutputStream;
 
 import org.apache.commons.lang3.StringUtils;
@@ -47,10 +47,9 @@ public class GBFFSerializer implements Runnable, Constants {
                 bw.write(String.format("%-21s%s%n", FEATURES_TAG, "Location/Qualifiers"));
                 for (Feature feature : sequence.getFeatures()) {
                     bw.write(String.format("     %-16s%s%n", feature.getType(), feature.getLocation()));
-                    Properties properties = feature.getQualifiers();
+                    Map<String, String> properties = feature.getQualifiers();
                     for (Object key : properties.keySet()) {
-                        String value = properties.getProperty(key.toString()).replace("\n",
-                                "\n" + StringUtils.repeat(" ", 21));
+                        String value = properties.get(key.toString()).replace("\n", "\n" + StringUtils.repeat(" ", 21));
                         if ("codon_start".equals(key)) {
                             bw.write(String.format("%s/%s=%s%n", StringUtils.repeat(" ", 21), key, value));
                         } else {
