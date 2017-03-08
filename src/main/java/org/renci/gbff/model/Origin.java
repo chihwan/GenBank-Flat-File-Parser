@@ -4,35 +4,41 @@ import java.io.Serializable;
 
 public class Origin implements Serializable {
 
-	private static final long serialVersionUID = 318127662439364742L;
+    private static final long serialVersionUID = 318127662439364742L;
 
-	private Integer index;
+    private Integer index;
 
-	private String sequence;
+    private String sequence;
 
-	public Origin() {
-		super();
-	}
+    public Origin() {
+        super();
+    }
 
-	public Integer getIndex() {
-		return index;
-	}
+    public Origin(Integer index, String sequence) {
+        super();
+        this.index = index;
+        this.sequence = sequence;
+    }
 
-	public void setIndex(Integer index) {
-		this.index = index;
-	}
+    public Integer getIndex() {
+        return index;
+    }
 
-	public String getSequence() {
-		return sequence;
-	}
+    public void setIndex(Integer index) {
+        this.index = index;
+    }
 
-	public void setSequence(String sequence) {
-		this.sequence = sequence;
-	}
+    public String getSequence() {
+        return sequence;
+    }
 
-	@Override
-	public String toString() {
-		return String.format("Origin [index=%s, sequence=%s]", index, sequence);
-	}
+    public void setSequence(String sequence) {
+        this.sequence = sequence;
+    }
+
+    @Override
+    public String toString() {
+        return String.format("Origin [index=%s, sequence=%s]", index, sequence);
+    }
 
 }

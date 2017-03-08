@@ -22,6 +22,16 @@ public class Reference implements Serializable {
         super();
     }
 
+    public Reference(String index, String authors, String title, String journal, String pubmed, String remark) {
+        super();
+        this.index = index;
+        this.authors = authors;
+        this.title = title;
+        this.journal = journal;
+        this.pubmed = pubmed;
+        this.remark = remark;
+    }
+
     public String getIndex() {
         return index;
     }

@@ -1,7 +1,9 @@
 package org.renci.gbff.model;
 
 import java.io.Serializable;
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 public class Feature implements Serializable {
@@ -14,12 +16,21 @@ public class Feature implements Serializable {
 
     private Map<String, String> qualifiers;
 
-    private Map<String, String> DBXrefs;
+    private Map<String, String> dbXRefs;
+
+    private List<TranslationException> translationExceptions;
 
     public Feature() {
         super();
         this.qualifiers = new HashMap<String, String>(20);
-        this.DBXrefs = new HashMap<String, String>(20);
+        this.dbXRefs = new HashMap<String, String>(20);
+        this.translationExceptions = new ArrayList<>();
+    }
+
+    public Feature(String type, String location) {
+        this();
+        this.type = type;
+        this.location = location;
     }
 
     public String getType() {
@@ -46,12 +57,20 @@ public class Feature implements Serializable {
         this.qualifiers = qualifiers;
     }
 
-    public Map<String, String> getDBXrefs() {
-        return DBXrefs;
+    public Map<String, String> getDbXRefs() {
+        return dbXRefs;
     }
 
-    public void setDBXrefs(Map<String, String> dBXrefs) {
-        DBXrefs = dBXrefs;
+    public void setDbXRefs(Map<String, String> dbXRefs) {
+        this.dbXRefs = dbXRefs;
+    }
+
+    public List<TranslationException> getTranslationExceptions() {
+        return translationExceptions;
+    }
+
+    public void setTranslationExceptions(List<TranslationException> translationExceptions) {
+        this.translationExceptions = translationExceptions;
     }
 
     @Override

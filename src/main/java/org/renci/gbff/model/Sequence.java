@@ -19,9 +19,9 @@ public class Sequence {
 
     private Source source;
 
-    private List<Reference> references;
-
     private Comment comment;
+
+    private List<Reference> references;
 
     private List<Feature> features;
 
@@ -32,6 +32,16 @@ public class Sequence {
         references = new ArrayList<Reference>();
         features = new ArrayList<Feature>();
         origin = new ArrayList<Origin>();
+    }
+
+    public Sequence(String locus, String definition, String accession, String version, String dbLink, String keywords) {
+        this();
+        this.locus = locus;
+        this.definition = definition;
+        this.accession = accession;
+        this.version = version;
+        this.dbLink = dbLink;
+        this.keywords = keywords;
     }
 
     public List<Reference> getReferences() {

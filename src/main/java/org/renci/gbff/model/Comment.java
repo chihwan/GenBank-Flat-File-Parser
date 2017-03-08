@@ -17,6 +17,11 @@ public class Comment implements Serializable {
         this.genomeAnnotations = new HashMap<String, String>(20);
     }
 
+    public Comment(String description) {
+        super();
+        this.description = description;
+    }
+
     public String getDescription() {
         return description;
     }
@@ -35,7 +40,7 @@ public class Comment implements Serializable {
 
     @Override
     public String toString() {
-        return String.format("Comment [description=%s, genomeAnnotations=%s]", description, genomeAnnotations);
+        return String.format("Comment [description=%s]", description);
     }
 
 }
