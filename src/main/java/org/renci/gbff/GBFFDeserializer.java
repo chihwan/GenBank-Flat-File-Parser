@@ -22,17 +22,23 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.StringTokenizer;
 import java.util.concurrent.Callable;
-import java.util.zip.GZIPInputStream;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 import org.apache.commons.compress.compressors.gzip.GzipCompressorInputStream;
+import org.apache.commons.lang3.Range;
 import org.apache.commons.lang3.StringUtils;
 import org.renci.gbff.model.Comment;
 import org.renci.gbff.model.Feature;
 import org.renci.gbff.model.Origin;
 import org.renci.gbff.model.Sequence;
 import org.renci.gbff.model.Source;
+import org.renci.gbff.model.TranslationException;
 
 public class GBFFDeserializer implements Callable<List<Sequence>> {
+
+    private static final Pattern translationExceptionPattern = Pattern
+            .compile("\\(pos:(?<start>\\d+)\\.+(?<stop>\\d+)\\,aa:(?<aminoAcid>[a-zA-Z]+)\\)");
 
     private final File inputFile;
 
@@ -234,7 +240,20 @@ public class GBFFDeserializer implements Callable<List<Sequence>> {
         if (line.startsWith("/db_xref") && line.endsWith("\"")) {
             String value = line.split("=")[1].replace("\"", "").replace("\n", " ");
             String[] valueSplit = value.split(":");
-            feature.getDBXrefs().put(valueSplit[0], valueSplit[1]);
+            feature.getDbXRefs().put(valueSplit[0], valueSplit[1]);
+            return;
+        }
+
+        if (line.startsWith("/transl_except")) {
+            String value = line.split("=")[1];
+            Matcher m = translationExceptionPattern.matcher(value);
+            if (m.find()) {
+                String start = m.group("start");
+                String stop = m.group("stop");
+                String aminoAcid = m.group("aminoAcid");
+                feature.getTranslationExceptions().add(new TranslationException(
+                        Range.between(Integer.valueOf(start), Integer.valueOf(stop)), aminoAcid));
+            }
             return;
         }
 
