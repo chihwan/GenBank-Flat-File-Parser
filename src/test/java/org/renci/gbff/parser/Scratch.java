@@ -28,6 +28,25 @@ public class Scratch {
     private final Logger logger = LoggerFactory.getLogger(Scratch.class);
 
     @Test
+    public void testTE() {
+        List<String> testables = Arrays.asList("(pos:262..264,aa:OTHER)", "(pos:556..558,aa:OTHER)",
+                "(pos:1204..1206,aa:OTHER)");
+
+        Pattern translationExceptionPattern = Pattern
+                .compile("\\(pos:(?<start>\\d+)\\.+(?<stop>\\d+)\\,aa:(?<aminoAcid>[a-zA-Z]+)\\)");
+
+        for (String test : testables) {
+            Matcher m = translationExceptionPattern.matcher(test);
+            if (m.find()) {
+                System.out.println(m.group("start"));
+                System.out.println(m.group("stop"));
+                System.out.println(m.group("aminoAcid"));
+            }
+        }
+
+    }
+
+    @Test
     public void testLocations() {
         String expression = "join(114..317,319..801)";
         // expression = "complement(join(2691..4571,4918..5163))";
@@ -57,11 +76,11 @@ public class Scratch {
     public void findComplexLocations() {
         GBFFManager parser = GBFFManager.getInstance(8, true);
         List<String> acceptablePrefixList = Arrays.asList(new String[] { "NM_" });
-        List<GBFFFilter> filters = Arrays.asList(new GBFFFilter[] {
-                new GBFFSequenceAccessionPrefixFilter(acceptablePrefixList),
-                new GBFFSourceOrganismNameFilter("Homo sapiens"),
-                new GBFFFeatureSourceOrganismNameFilter("Homo sapiens"), new GBFFFeatureTypeNameFilter("CDS"),
-                new GBFFFeatureTypeNameFilter("source") });
+        List<GBFFFilter> filters = Arrays
+                .asList(new GBFFFilter[] { new GBFFSequenceAccessionPrefixFilter(acceptablePrefixList),
+                        new GBFFSourceOrganismNameFilter("Homo sapiens"),
+                        new GBFFFeatureSourceOrganismNameFilter("Homo sapiens"), new GBFFFeatureTypeNameFilter("CDS"),
+                        new GBFFFeatureTypeNameFilter("source") });
 
         GBFFAndFilter filter = new GBFFAndFilter(filters);
         List<File> ret = new ArrayList<File>();
