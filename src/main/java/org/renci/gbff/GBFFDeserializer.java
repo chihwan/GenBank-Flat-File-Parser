@@ -86,14 +86,6 @@ public class GBFFDeserializer implements Callable<List<Sequence>> {
             e.printStackTrace();
         }
 
-        // try (FileInputStream fis = new FileInputStream(inputFile);
-        // GZIPInputStream gis = new GZIPInputStream(fis);
-        // InputStreamReader isr = new InputStreamReader(gis);
-        // BufferedReader br = new BufferedReader(isr)) {
-        // } catch (Exception e) {
-        // e.printStackTrace();
-        // }
-        System.gc();
         return ret;
     }
 
