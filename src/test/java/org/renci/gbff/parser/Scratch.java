@@ -25,6 +25,8 @@ import org.slf4j.LoggerFactory;
 
 public class Scratch {
 
+    private static final GBFFManager gbffMgr = GBFFManager.getInstance();
+
     private final Logger logger = LoggerFactory.getLogger(Scratch.class);
 
     @Test
@@ -74,7 +76,6 @@ public class Scratch {
     }
 
     public void findComplexLocations() {
-        GBFFManager parser = GBFFManager.getInstance(8, true);
         List<String> acceptablePrefixList = Arrays.asList(new String[] { "NM_" });
         List<GBFFFilter> filters = Arrays
                 .asList(new GBFFFilter[] { new GBFFSequenceAccessionPrefixFilter(acceptablePrefixList),
@@ -93,7 +94,7 @@ public class Scratch {
         }
 
         for (File f : ret) {
-            List<Sequence> results = parser.deserialize(filter, f);
+            List<Sequence> results = gbffMgr.deserialize(filter, 8, true, f);
             for (Sequence sequence : results) {
                 List<Feature> features = sequence.getFeatures();
                 for (Feature feature : features) {

@@ -11,9 +11,10 @@ import org.renci.gbff.model.Sequence;
 
 public class SerializeTest {
 
+    private static final GBFFManager gbffMgr = GBFFManager.getInstance();
+
     @Test
     public void testSingle() {
-        GBFFManager gbffMgr = GBFFManager.getInstance();
         List<Sequence> results = gbffMgr.deserialize(new File("/tmp", "single.gb.gz"));
         assertTrue(results != null);
         assertTrue(results.size() == 1);
