@@ -13,30 +13,17 @@ import org.renci.gbff.model.Sequence;
 
 public class GBFFManager {
 
-    private final int threads;
-
-    private final boolean skipOrigin;
-
     private static GBFFManager instance;
-
-    public static GBFFManager getInstance(int threads, boolean skipOrigin) {
-        if (instance == null) {
-            instance = new GBFFManager(threads, skipOrigin);
-        }
-        return instance;
-    }
 
     public static GBFFManager getInstance() {
         if (instance == null) {
-            instance = new GBFFManager(2, false);
+            instance = new GBFFManager();
         }
         return instance;
     }
 
-    private GBFFManager(int threads, boolean skipOrigin) {
+    private GBFFManager() {
         super();
-        this.threads = threads;
-        this.skipOrigin = skipOrigin;
     }
 
     public List<Sequence> deserialize(final File... gbFiles) {
@@ -44,6 +31,10 @@ public class GBFFManager {
     }
 
     public List<Sequence> deserialize(final GBFFFilter filter, final File... gbFiles) {
+        return deserialize(filter, 2, false, gbFiles);
+    }
+
+    public List<Sequence> deserialize(final GBFFFilter filter, int threads, boolean skipOrigin, final File... gbFiles) {
         ExecutorService es = Executors.newFixedThreadPool(threads);
         List<Sequence> ret = new ArrayList<Sequence>();
         List<Future<List<Sequence>>> futures = new ArrayList<Future<List<Sequence>>>();
@@ -52,7 +43,9 @@ public class GBFFManager {
                 futures.add(es.submit(new GBFFDeserializer(f, filter, skipOrigin)));
             }
             es.shutdown();
-            es.awaitTermination(5L, TimeUnit.MINUTES);
+            if (!es.awaitTermination(5L, TimeUnit.MINUTES)) {
+                es.shutdownNow();
+            }
             for (Future<List<Sequence>> future : futures) {
                 ret.addAll(future.get());
             }
