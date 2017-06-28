@@ -19,15 +19,39 @@ import org.renci.gbff.model.Sequence;
 
 public class DeserializeTest implements Runnable {
 
+    private static final GBFFManager gbffMgr = GBFFManager.getInstance();
+
     public DeserializeTest() {
         super();
     }
 
     @Test
+    public void scratch() {
+
+        List<GBFFFilter> filters = Arrays.asList(
+                new GBFFFilter[] { new GBFFSequenceAccessionPrefixFilter(Arrays.asList(new String[] { "NM_", "XM_" })),
+                        new GBFFSourceOrganismNameFilter("Homo sapiens"),
+                        new GBFFFeatureSourceOrganismNameFilter("Homo sapiens"), new GBFFFeatureTypeNameFilter("CDS"),
+                        new GBFFFeatureTypeNameFilter("source") });
+
+        GBFFAndFilter gbffFilter = new GBFFAndFilter(filters);
+
+        File f = new File(
+                "/home/jdr0887/workspace/renci/canvas/primer/primer/primer-server/target/primer-server-0.0.6-SNAPSHOT/data/refseq",
+                "vertebrate_mammalian.2.rna.gbff.gz");
+
+        List<Sequence> results = gbffMgr.deserialize(gbffFilter, f);
+
+        for (Sequence sequence : results) {
+            String versionedAccession = sequence.getVersion().trim();
+            System.out.println(versionedAccession.toString());
+        }
+    }
+
+    @Test
     public void testSingle() {
-        GBFFManager parser = GBFFManager.getInstance();
         long start = System.currentTimeMillis();
-        List<Sequence> results = parser.deserialize(new File("/tmp", "vertebrate_mammalian.286.rna.gbff.gz"));
+        List<Sequence> results = gbffMgr.deserialize(new File("/tmp", "vertebrate_mammalian.286.rna.gbff.gz"));
         long end = System.currentTimeMillis();
         assertTrue(results != null);
         System.out.println(String.format("%d seconds", (end - start) / 1000));
@@ -41,10 +65,9 @@ public class DeserializeTest implements Runnable {
 
     @Test
     public void testMultiple() {
-        GBFFManager parser = GBFFManager.getInstance();
         long start = System.currentTimeMillis();
-        List<Sequence> results = parser.deserialize(new File("/tmp", "vertebrate_mammalian.95.rna.gbff.gz"), new File(
-                "/tmp", "vertebrate_mammalian.100.rna.gbff.gz"));
+        List<Sequence> results = gbffMgr.deserialize(new File("/tmp", "vertebrate_mammalian.95.rna.gbff.gz"),
+                new File("/tmp", "vertebrate_mammalian.100.rna.gbff.gz"));
         long end = System.currentTimeMillis();
         assertTrue(results != null);
         assertTrue(results.size() > 1);
@@ -57,12 +80,11 @@ public class DeserializeTest implements Runnable {
 
     @Test
     public void testFilter() {
-        GBFFManager parser = GBFFManager.getInstance();
         long start = System.currentTimeMillis();
         List<String> acceptablePrefixList = Arrays.asList(new String[] { "NM_" });
-        List<Sequence> results = parser.deserialize(new GBFFSequenceAccessionPrefixFilter(acceptablePrefixList),
-                new File("/tmp", "vertebrate_mammalian.95.rna.gbff.gz"), new File("/tmp",
-                        "vertebrate_mammalian.100.rna.gbff.gz"));
+        List<Sequence> results = gbffMgr.deserialize(new GBFFSequenceAccessionPrefixFilter(acceptablePrefixList),
+                new File("/tmp", "vertebrate_mammalian.95.rna.gbff.gz"),
+                new File("/tmp", "vertebrate_mammalian.100.rna.gbff.gz"));
         long end = System.currentTimeMillis();
         assertTrue(results != null);
         assertTrue(results.size() > 1);
@@ -76,15 +98,14 @@ public class DeserializeTest implements Runnable {
 
     @Test
     public void testAndFilter() {
-        GBFFManager parser = GBFFManager.getInstance();
         long start = System.currentTimeMillis();
         List<String> acceptablePrefixList = Arrays.asList(new String[] { "NM_" });
-        List<GBFFFilter> filters = Arrays.asList(new GBFFFilter[] {
-                new GBFFSequenceAccessionPrefixFilter(acceptablePrefixList),
-                new GBFFSourceOrganismNameFilter("Homo sapiens"),
-                new GBFFFeatureSourceOrganismNameFilter("Homo sapiens") });
-        List<Sequence> results = parser.deserialize(new GBFFAndFilter(filters), new File("/tmp",
-                "vertebrate_mammalian.286.rna.gbff.gz"));
+        List<GBFFFilter> filters = Arrays
+                .asList(new GBFFFilter[] { new GBFFSequenceAccessionPrefixFilter(acceptablePrefixList),
+                        new GBFFSourceOrganismNameFilter("Homo sapiens"),
+                        new GBFFFeatureSourceOrganismNameFilter("Homo sapiens") });
+        List<Sequence> results = gbffMgr.deserialize(new GBFFAndFilter(filters),
+                new File("/tmp", "vertebrate_mammalian.286.rna.gbff.gz"));
         long end = System.currentTimeMillis();
         assertTrue(results != null);
         assertTrue(results.size() > 1);
@@ -99,14 +120,13 @@ public class DeserializeTest implements Runnable {
 
     @Test
     public void testPerformance() {
-        GBFFManager parser = GBFFManager.getInstance(4, true);
         long start = System.currentTimeMillis();
         List<String> acceptablePrefixList = Arrays.asList(new String[] { "NM_" });
-        List<GBFFFilter> filters = Arrays.asList(new GBFFFilter[] {
-                new GBFFSequenceAccessionPrefixFilter(acceptablePrefixList),
-                new GBFFSourceOrganismNameFilter("Homo sapiens"),
-                new GBFFFeatureSourceOrganismNameFilter("Homo sapiens"), new GBFFFeatureTypeNameFilter("CDS"),
-                new GBFFFeatureTypeNameFilter("source") });
+        List<GBFFFilter> filters = Arrays
+                .asList(new GBFFFilter[] { new GBFFSequenceAccessionPrefixFilter(acceptablePrefixList),
+                        new GBFFSourceOrganismNameFilter("Homo sapiens"),
+                        new GBFFFeatureSourceOrganismNameFilter("Homo sapiens"), new GBFFFeatureTypeNameFilter("CDS"),
+                        new GBFFFeatureTypeNameFilter("source") });
 
         List<File> ret = new ArrayList<File>();
 
@@ -117,7 +137,8 @@ public class DeserializeTest implements Runnable {
             }
         }
 
-        List<Sequence> results = parser.deserialize(new GBFFAndFilter(filters), ret.toArray(new File[ret.size()]));
+        List<Sequence> results = gbffMgr.deserialize(new GBFFAndFilter(filters), 4, true,
+                ret.toArray(new File[ret.size()]));
         long end = System.currentTimeMillis();
         assertTrue(results != null);
         assertTrue(results.size() > 1);
@@ -127,14 +148,13 @@ public class DeserializeTest implements Runnable {
 
     @Override
     public void run() {
-        GBFFManager parser = GBFFManager.getInstance(4, true);
         long start = System.currentTimeMillis();
         List<String> acceptablePrefixList = Arrays.asList(new String[] { "NM_" });
-        List<GBFFFilter> filters = Arrays.asList(new GBFFFilter[] {
-                new GBFFSequenceAccessionPrefixFilter(acceptablePrefixList),
-                new GBFFSourceOrganismNameFilter("Homo sapiens"),
-                new GBFFFeatureSourceOrganismNameFilter("Homo sapiens"), new GBFFFeatureTypeNameFilter("CDS"),
-                new GBFFFeatureTypeNameFilter("source") });
+        List<GBFFFilter> filters = Arrays
+                .asList(new GBFFFilter[] { new GBFFSequenceAccessionPrefixFilter(acceptablePrefixList),
+                        new GBFFSourceOrganismNameFilter("Homo sapiens"),
+                        new GBFFFeatureSourceOrganismNameFilter("Homo sapiens"), new GBFFFeatureTypeNameFilter("CDS"),
+                        new GBFFFeatureTypeNameFilter("source") });
 
         List<File> ret = new ArrayList<File>();
 
@@ -145,7 +165,8 @@ public class DeserializeTest implements Runnable {
             }
         }
 
-        List<Sequence> results = parser.deserialize(new GBFFAndFilter(filters), ret.toArray(new File[ret.size()]));
+        List<Sequence> results = gbffMgr.deserialize(new GBFFAndFilter(filters), 4, true,
+                ret.toArray(new File[ret.size()]));
         long end = System.currentTimeMillis();
         System.out.println(String.format("%d records", results.size()));
         System.out.println(String.format("%d seconds", (end - start) / 1000));
