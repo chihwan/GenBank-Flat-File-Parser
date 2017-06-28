@@ -1,9 +1,12 @@
 package org.renci.gbff.model;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 
-public class Sequence {
+public class Sequence implements Serializable {
+
+    private static final long serialVersionUID = -2883469898149057451L;
 
     private String locus;
 
@@ -136,6 +139,73 @@ public class Sequence {
     public String toString() {
         return String.format("Sequence [accession=%s, version=%s, dbLink=%s, keywords=%s]", accession, version, dbLink,
                 keywords);
+    }
+
+    @Override
+    public int hashCode() {
+        final int prime = 31;
+        int result = 1;
+        result = prime * result + ((accession == null) ? 0 : accession.hashCode());
+        result = prime * result + ((comment == null) ? 0 : comment.hashCode());
+        result = prime * result + ((dbLink == null) ? 0 : dbLink.hashCode());
+        result = prime * result + ((definition == null) ? 0 : definition.hashCode());
+        result = prime * result + ((keywords == null) ? 0 : keywords.hashCode());
+        result = prime * result + ((locus == null) ? 0 : locus.hashCode());
+        result = prime * result + ((source == null) ? 0 : source.hashCode());
+        result = prime * result + ((version == null) ? 0 : version.hashCode());
+        return result;
+    }
+
+    @Override
+    public boolean equals(Object obj) {
+        if (this == obj)
+            return true;
+        if (obj == null)
+            return false;
+        if (getClass() != obj.getClass())
+            return false;
+        Sequence other = (Sequence) obj;
+        if (accession == null) {
+            if (other.accession != null)
+                return false;
+        } else if (!accession.equals(other.accession))
+            return false;
+        if (comment == null) {
+            if (other.comment != null)
+                return false;
+        } else if (!comment.equals(other.comment))
+            return false;
+        if (dbLink == null) {
+            if (other.dbLink != null)
+                return false;
+        } else if (!dbLink.equals(other.dbLink))
+            return false;
+        if (definition == null) {
+            if (other.definition != null)
+                return false;
+        } else if (!definition.equals(other.definition))
+            return false;
+        if (keywords == null) {
+            if (other.keywords != null)
+                return false;
+        } else if (!keywords.equals(other.keywords))
+            return false;
+        if (locus == null) {
+            if (other.locus != null)
+                return false;
+        } else if (!locus.equals(other.locus))
+            return false;
+        if (source == null) {
+            if (other.source != null)
+                return false;
+        } else if (!source.equals(other.source))
+            return false;
+        if (version == null) {
+            if (other.version != null)
+                return false;
+        } else if (!version.equals(other.version))
+            return false;
+        return true;
     }
 
 }

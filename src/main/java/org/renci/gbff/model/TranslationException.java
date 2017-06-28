@@ -39,4 +39,35 @@ public class TranslationException {
         return String.format("TranslationException [range=%s, aminoAcid=%s]", range, aminoAcid);
     }
 
+    @Override
+    public int hashCode() {
+        final int prime = 31;
+        int result = 1;
+        result = prime * result + ((aminoAcid == null) ? 0 : aminoAcid.hashCode());
+        result = prime * result + ((range == null) ? 0 : range.hashCode());
+        return result;
+    }
+
+    @Override
+    public boolean equals(Object obj) {
+        if (this == obj)
+            return true;
+        if (obj == null)
+            return false;
+        if (getClass() != obj.getClass())
+            return false;
+        TranslationException other = (TranslationException) obj;
+        if (aminoAcid == null) {
+            if (other.aminoAcid != null)
+                return false;
+        } else if (!aminoAcid.equals(other.aminoAcid))
+            return false;
+        if (range == null) {
+            if (other.range != null)
+                return false;
+        } else if (!range.equals(other.range))
+            return false;
+        return true;
+    }
+
 }
