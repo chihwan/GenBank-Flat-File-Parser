@@ -94,7 +94,7 @@ public class Scratch {
         }
 
         for (File f : ret) {
-            List<Sequence> results = gbffMgr.deserialize(filter, 8, true, f);
+            List<Sequence> results = gbffMgr.deserialize(filter, true, f);
             for (Sequence sequence : results) {
                 List<Feature> features = sequence.getFeatures();
                 for (Feature feature : features) {

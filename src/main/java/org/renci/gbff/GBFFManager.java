@@ -3,11 +3,6 @@ package org.renci.gbff;
 import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.concurrent.ExecutionException;
-import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Executors;
-import java.util.concurrent.Future;
-import java.util.concurrent.TimeUnit;
 
 import org.renci.gbff.model.Sequence;
 
@@ -26,30 +21,20 @@ public class GBFFManager {
         super();
     }
 
-    public List<Sequence> deserialize(final File... gbFiles) {
-        return deserialize(null, gbFiles);
+    public List<Sequence> deserialize(File gbFile) {
+        return deserialize(null, gbFile);
     }
 
-    public List<Sequence> deserialize(final GBFFFilter filter, final File... gbFiles) {
-        return deserialize(filter, 2, false, gbFiles);
+    public List<Sequence> deserialize(final GBFFFilter filter, File gbFile) {
+        return deserialize(filter, false, gbFile);
     }
 
-    public List<Sequence> deserialize(final GBFFFilter filter, int threads, boolean skipOrigin, final File... gbFiles) {
-        ExecutorService es = Executors.newFixedThreadPool(threads);
+    public List<Sequence> deserialize(final GBFFFilter filter, boolean skipOrigin, File gbFile) {
         List<Sequence> ret = new ArrayList<Sequence>();
-        List<Future<List<Sequence>>> futures = new ArrayList<Future<List<Sequence>>>();
         try {
-            for (File f : gbFiles) {
-                futures.add(es.submit(new GBFFDeserializer(f, filter, skipOrigin)));
-            }
-            es.shutdown();
-            if (!es.awaitTermination(5L, TimeUnit.MINUTES)) {
-                es.shutdownNow();
-            }
-            for (Future<List<Sequence>> future : futures) {
-                ret.addAll(future.get());
-            }
-        } catch (InterruptedException | ExecutionException e) {
+            GBFFDeserializer deserializer = new GBFFDeserializer(gbFile, filter, skipOrigin);
+            ret.addAll(deserializer.call());
+        } catch (Exception e) {
             e.printStackTrace();
         }
         return ret;

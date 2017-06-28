@@ -66,8 +66,8 @@ public class DeserializeTest implements Runnable {
     @Test
     public void testMultiple() {
         long start = System.currentTimeMillis();
-        List<Sequence> results = gbffMgr.deserialize(new File("/tmp", "vertebrate_mammalian.95.rna.gbff.gz"),
-                new File("/tmp", "vertebrate_mammalian.100.rna.gbff.gz"));
+        List<Sequence> results = gbffMgr.deserialize(new File("/tmp", "vertebrate_mammalian.95.rna.gbff.gz"));
+        results.addAll(gbffMgr.deserialize(new File("/tmp", "vertebrate_mammalian.100.rna.gbff.gz")));
         long end = System.currentTimeMillis();
         assertTrue(results != null);
         assertTrue(results.size() > 1);
@@ -82,9 +82,10 @@ public class DeserializeTest implements Runnable {
     public void testFilter() {
         long start = System.currentTimeMillis();
         List<String> acceptablePrefixList = Arrays.asList(new String[] { "NM_" });
-        List<Sequence> results = gbffMgr.deserialize(new GBFFSequenceAccessionPrefixFilter(acceptablePrefixList),
-                new File("/tmp", "vertebrate_mammalian.95.rna.gbff.gz"),
-                new File("/tmp", "vertebrate_mammalian.100.rna.gbff.gz"));
+        GBFFFilter filter = new GBFFSequenceAccessionPrefixFilter(acceptablePrefixList);
+        List<Sequence> results = gbffMgr.deserialize(filter, new File("/tmp", "vertebrate_mammalian.95.rna.gbff.gz"));
+        results.addAll(gbffMgr.deserialize(filter, new File("/tmp", "vertebrate_mammalian.100.rna.gbff.gz")));
+
         long end = System.currentTimeMillis();
         assertTrue(results != null);
         assertTrue(results.size() > 1);
@@ -128,17 +129,17 @@ public class DeserializeTest implements Runnable {
                         new GBFFFeatureSourceOrganismNameFilter("Homo sapiens"), new GBFFFeatureTypeNameFilter("CDS"),
                         new GBFFFeatureTypeNameFilter("source") });
 
-        List<File> ret = new ArrayList<File>();
+        GBFFFilter filter = new GBFFAndFilter(filters);
+
+        List<Sequence> results = new ArrayList<>();
 
         File tmpDir = new File("/tmp");
         for (File f : tmpDir.listFiles()) {
             if (f.getName().startsWith("vertebrate_mammalian")) {
-                ret.add(f);
+                gbffMgr.deserialize(filter, true, f);
             }
         }
 
-        List<Sequence> results = gbffMgr.deserialize(new GBFFAndFilter(filters), 4, true,
-                ret.toArray(new File[ret.size()]));
         long end = System.currentTimeMillis();
         assertTrue(results != null);
         assertTrue(results.size() > 1);
@@ -156,17 +157,17 @@ public class DeserializeTest implements Runnable {
                         new GBFFFeatureSourceOrganismNameFilter("Homo sapiens"), new GBFFFeatureTypeNameFilter("CDS"),
                         new GBFFFeatureTypeNameFilter("source") });
 
-        List<File> ret = new ArrayList<File>();
+        List<Sequence> results = new ArrayList<>();
+
+        GBFFFilter filter = new GBFFAndFilter(filters);
 
         File tmpDir = new File("/tmp");
         for (File f : tmpDir.listFiles()) {
             if (f.getName().startsWith("vertebrate_mammalian")) {
-                ret.add(f);
+                gbffMgr.deserialize(filter, true, f);
             }
         }
 
-        List<Sequence> results = gbffMgr.deserialize(new GBFFAndFilter(filters), 4, true,
-                ret.toArray(new File[ret.size()]));
         long end = System.currentTimeMillis();
         System.out.println(String.format("%d records", results.size()));
         System.out.println(String.format("%d seconds", (end - start) / 1000));
