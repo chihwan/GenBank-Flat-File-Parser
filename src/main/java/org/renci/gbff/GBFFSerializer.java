@@ -30,8 +30,8 @@ public class GBFFSerializer implements Runnable, Constants {
     @Override
     public void run() {
 
-        try (BufferedWriter bw = new BufferedWriter(new OutputStreamWriter(new GZIPOutputStream(new FileOutputStream(
-                gbFile))))) {
+        try (BufferedWriter bw = new BufferedWriter(
+                new OutputStreamWriter(new GZIPOutputStream(new FileOutputStream(gbFile))))) {
             for (Sequence sequence : sequences) {
                 bw.write(String.format("%-12s%s%n", LOCUS_TAG, sequence.getLocus()));
                 bw.write(String.format("%-12s%s%n", DEFINITION_TAG, sequence.getDefinition()));
@@ -40,8 +40,8 @@ public class GBFFSerializer implements Runnable, Constants {
                 bw.write(String.format("%-12s%s%n", KEYWORDS_TAG, sequence.getKeywords()));
                 Source source = sequence.getSource();
                 bw.write(String.format("%-12s%s%n", SOURCE_TAG, source.getDescription()));
-                bw.write(String.format("  %-10s%s%n", ORGANISM_TAG, source.getOrganism()
-                        .replace("\n", "\n            ")));
+                bw.write(String.format("  %-10s%s%n", ORGANISM_TAG,
+                        source.getOrganism().replace("\n", "\n            ")));
                 bw.write(String.format("%-12s%s%n", COMMENT_TAG,
                         sequence.getComment().getDescription().replace("\n", "\n" + StringUtils.repeat(" ", 12))));
                 bw.write(String.format("%-21s%s%n", FEATURES_TAG, "Location/Qualifiers"));
