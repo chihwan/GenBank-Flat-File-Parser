@@ -1,8 +1,12 @@
 package org.renci.gbff.model;
 
+import java.io.Serializable;
+
 import org.apache.commons.lang3.Range;
 
-public class TranslationException {
+public class TranslationException implements Serializable {
+
+    private static final long serialVersionUID = 8452218476974148646L;
 
     private Range<Integer> range;
 
