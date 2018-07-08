@@ -179,7 +179,7 @@ public class GBFFDeserializer implements Callable<List<Sequence>> {
                     sb.delete(0, sb.length());
 
                     String locationValue = line.substring(21, line.length()).trim();
-                    if (locationValue.startsWith("join") || locationValue.startsWith("order")) {
+                    if (locationValue.contains("join") || locationValue.contains("order")) {
                         sb.append(locationValue);
                         while (!line.trim().endsWith(")")) {
                             line = lineIter.next().trim();
